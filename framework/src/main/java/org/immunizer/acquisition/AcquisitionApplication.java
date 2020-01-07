@@ -2,7 +2,6 @@ package org.immunizer.acquisition;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.immunizer.acquisition.Invocation;
 
 import java.time.Duration;
 
