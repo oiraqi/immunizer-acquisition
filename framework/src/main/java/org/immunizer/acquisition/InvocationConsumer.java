@@ -25,7 +25,7 @@ public class InvocationConsumer {
         props.setProperty("auto.commit.interval.ms", "1000");
         props.put("session.timeout.ms", "30000");
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.setProperty("value.deserializer", "org.immunizer.acquisition.consumer.InvocationDeserializer");
+        props.setProperty("value.deserializer", "org.immunizer.acquisition.InvocationDeserializer");
 
         consumer = new KafkaConsumer<String, Invocation>(props);
         Collection<String> topics = Collections.singletonList(TOPIC);        

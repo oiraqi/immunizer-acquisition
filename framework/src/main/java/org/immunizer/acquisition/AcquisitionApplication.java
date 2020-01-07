@@ -11,7 +11,8 @@ public class AcquisitionApplication {
     public static void main(String[] args) {
         
         InvocationConsumer consumer = new InvocationConsumer();
-        FeatureExtractor featureExtractor = FeatureExtractor.getSingleton();
+        FeatureRecordProducer producer = FeatureRecordProducer.getSingleton();
+        FeatureExtractor extractor = FeatureExtractor.getSingleton();
 
         try {            
             while (true) {
@@ -20,9 +21,9 @@ public class AcquisitionApplication {
                 for (ConsumerRecord<String, Invocation> record : records){
                     System.out.printf("offset = %d, key = %s, value = %s%n",
                         record.offset(), record.key(), record.value());
-                    FeatureRecord featureRecord = featureExtractor.extract(record.value());
+                    FeatureRecord featureRecord = extractor.extract(record.value());
                     if (featureRecord != null) {
-                        featureExtractor.log(featureRecord);
+                        producer.send(featureRecord);
                     }
                 }
             }
