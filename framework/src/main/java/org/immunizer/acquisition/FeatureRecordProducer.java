@@ -17,7 +17,7 @@ public class FeatureRecordProducer {
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.immunizer.instrumentation.FeatureRecordSerializer");
+        props.put("value.serializer", "org.immunizer.acquisition.FeatureRecordSerializer");
         producer = new KafkaProducer<String, FeatureRecord>(props);
     }
 
