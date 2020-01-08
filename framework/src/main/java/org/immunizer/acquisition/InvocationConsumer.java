@@ -12,8 +12,8 @@ import java.time.Duration;
 public class InvocationConsumer {
 
     private Consumer<String, Invocation> consumer;
-    private static final String BOOTSTRAP_SERVERS = "localhost:9092";
-    private static final String GROUP_ID = "test";
+    private static final String BOOTSTRAP_SERVERS = "localhost:29092";
+    private static final String GROUP_ID = "ACQUISITION_GROUP";
     private static final String TOPIC = "Invocations";
 
     public InvocationConsumer () {

@@ -9,9 +9,9 @@ public class AcquisitionApplication {
 
     public static void main(String[] args) {
         
-        InvocationConsumer consumer = new InvocationConsumer();
-        FeatureRecordProducer producer = FeatureRecordProducer.getSingleton();
+        InvocationConsumer consumer = new InvocationConsumer();        
         FeatureExtractor extractor = FeatureExtractor.getSingleton();
+        FeatureRecordProducer producer = new FeatureRecordProducer();
 
         try {            
             while (true) {

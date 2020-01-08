@@ -10,23 +10,23 @@ import org.immunizer.acquisition.Invocation;
 
 import com.google.gson.JsonElement;
 import com.google.gson.Gson;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+// import java.io.File;
+// import java.io.FileWriter;
+// import java.io.PrintWriter;
 import com.google.common.base.Splitter;
 
 public class FeatureExtractor {
 
 	private HashMap<String, Integer> dictionary, callStackOccurences, pathToNodeOccurences,
-			aggregatedPathToNodeOccurences, flushCounters, csCounters1, csCounters3;
+			aggregatedPathToNodeOccurences, /*flushCounters, */csCounters1, csCounters3;
 	private HashMap<String, HashMap<String, Double>> cmqs;
 	private Gson gson;
-	private HashMap<String, PrintWriter> models;
+	// private HashMap<String, PrintWriter> models;
 	private static FeatureExtractor singleton;
 	private HashMap<String, Double> sumMinIF1s, sumMinIF3s;
-	private String modelsRepository;
-	private int bufferSize;
-	private int skipFirstRecords;	// Use these first records just to learn. Don't log them.  
+	// private String modelsRepository;
+	// private int bufferSize;
+	// private int skipFirstRecords;	// Use these first records just to learn. Don't log them.  
 
 	private FeatureExtractor() {
 		dictionary = new HashMap<String, Integer>();
@@ -34,19 +34,19 @@ public class FeatureExtractor {
 		pathToNodeOccurences = new HashMap<String, Integer>();
 		cmqs = new HashMap<String, HashMap<String, Double>>();
 		aggregatedPathToNodeOccurences = new HashMap<String, Integer>();
-		flushCounters = new HashMap<String, Integer>();
+		// flushCounters = new HashMap<String, Integer>();
 		csCounters1 = new HashMap<String, Integer>();
 		csCounters3 = new HashMap<String, Integer>();
 		gson = new Gson();
-		models = new HashMap<String, PrintWriter>();
+		// models = new HashMap<String, PrintWriter>();
 		sumMinIF1s = new HashMap<String, Double>();
 		sumMinIF3s = new HashMap<String, Double>();
-		modelsRepository = System.getProperty("models");
-		bufferSize = Integer.parseInt(System.getProperty("buffer"));
-		skipFirstRecords = Integer.parseInt(System.getProperty("skip"));
-		File path = new File(modelsRepository);
+		// modelsRepository = System.getProperty("models");
+		// bufferSize = Integer.parseInt(System.getProperty("buffer"));
+		// skipFirstRecords = Integer.parseInt(System.getProperty("skip"));
+		/* File path = new File(modelsRepository);
 		if (!path.exists())
-			path.mkdir();
+			path.mkdir();*/
 	}
 
 	public static FeatureExtractor getSingleton() {
@@ -272,7 +272,7 @@ public class FeatureExtractor {
 				(result != null) ? result.toString().replace('"', '_').replace('\'', '_').replace(' ', '_') : null);
 	}
 
-	public synchronized void log(FeatureRecord featureRecord) {
+	/*public synchronized void log(FeatureRecord featureRecord) {
 		if (callStackOccurences.get("" + featureRecord.getCallStackId()) <= skipFirstRecords)
 			return;
 
@@ -293,7 +293,7 @@ public class FeatureExtractor {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-	}
+	}*/
 
 	/**
 	 * Builds features for each parameter or returned value by walking recursively
