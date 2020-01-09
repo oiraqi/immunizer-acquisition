@@ -15,11 +15,8 @@ public class AcquisitionApplication {
 
         try {            
             while (true) {
-                ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(5));
-                System.out.println(records.count());
+                ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(15));
                 for (ConsumerRecord<String, Invocation> record : records){
-                    System.out.printf("offset = %d, key = %s, value = %s%n",
-                        record.offset(), record.key(), record.value());
                     FeatureRecord featureRecord = extractor.extract(record.value());
                     if (featureRecord != null) {
                         producer.send(featureRecord);

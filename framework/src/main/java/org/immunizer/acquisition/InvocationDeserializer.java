@@ -11,7 +11,6 @@ public class InvocationDeserializer implements Deserializer<Invocation> {
     
     @Override
     public Invocation deserialize(String topic, byte[] bytes) {
-        System.out.println(bytes);
         return gson.fromJson(new String(bytes), Invocation.class);
     }
 }

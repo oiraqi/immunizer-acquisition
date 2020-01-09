@@ -7,30 +7,29 @@ public class FeatureRecord {
     private int callStackId;
     // private StackTraceElement[] callStack;
     private String threadTag;
-    private long startTime;
-    private long endTime;
+    /*private long startTime;
+    private long endTime;*/
     private String version;
     private String fullyQualifiedMethodName;
     private HashMap<String, Double> record;
-    private String parameters;
-    private String result;
+    /*private String parameters;
+    private String result;*/
 
     protected FeatureRecord() {
     }
 
-    public FeatureRecord(int callStackId, /*StackTraceElement[] callStack, */String threadTag, long startTime, long endTime,
-            String fullyQualifiedMethodName, String version, HashMap<String, Double> record, String parameters,
-            String result) {
+    public FeatureRecord(int callStackId, /*StackTraceElement[] callStack, */String threadTag/*, long startTime, long endTime*/,
+            String fullyQualifiedMethodName, String version, HashMap<String, Double> record/*, String parameters, String result*/) {
         this.callStackId = callStackId;
         // this.callStack = callStack;
         this.threadTag = threadTag;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        /*this.startTime = startTime;
+        this.endTime = endTime;*/
         this.fullyQualifiedMethodName = fullyQualifiedMethodName;
         this.version = version;
         this.record = record;
-        this.parameters = parameters;
-        this.result = result;
+        /*this.parameters = parameters;
+        this.result = result;*/
     }
 
     public int getCallStackId() {
@@ -74,15 +73,15 @@ public class FeatureRecord {
         return buffer.toString();
     }
 
-    public long getStartTime() {
+    /*public long getStartTime() {
         return startTime;
     }
 
     public long getEndTime() {
         return endTime;
-    }
+    }*/
 
-    public String getParameters() {
+    /*public String getParameters() {
         return parameters;
     }
 
@@ -96,5 +95,5 @@ public class FeatureRecord {
 
     public void setResult(String result) {
         this.result = result;
-    }
+    }*/
 }

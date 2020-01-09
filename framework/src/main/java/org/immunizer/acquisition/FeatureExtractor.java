@@ -265,11 +265,11 @@ public class FeatureExtractor {
 		// record.put("execution_time", (double)executionTime);
 		record.put("exception", exception ? (double) 1 : 0);
 		return new FeatureRecord(callStackId, /*invocation.getCallStack(), */invocation.getThreadTag(),
-				invocation.getStartTime(), invocation.getEndTime(), invocation.getFullyQualifiedMethodName(),
-				invocation.getVersion(), record,
+				/*invocation.getStartTime(), invocation.getEndTime(),*/ invocation.getFullyQualifiedMethodName(),
+				invocation.getVersion(), record/*,
 				(parameters != null) ? parameters.toString().replace('"', '_').replace('\'', '_').replace(' ', '_')
 						: null,
-				(result != null) ? result.toString().replace('"', '_').replace('\'', '_').replace(' ', '_') : null);
+				(result != null) ? result.toString().replace('"', '_').replace('\'', '_').replace(' ', '_') : null*/);
 	}
 
 	/*public synchronized void log(FeatureRecord featureRecord) {

@@ -8,7 +8,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 public class FeatureRecordProducer {
 
     private KafkaProducer<String, FeatureRecord> producer;
-    private static final String BOOTSTRAP_SERVERS = "localhost:9092";
+    private static final String BOOTSTRAP_SERVERS = "localhost:29092";
     private static final String TOPIC = "FeatureRecords";
 
     public FeatureRecordProducer() {
