@@ -1,14 +1,11 @@
 # Acquisition Microservice of Immunizer
 
-This is the Java implementation of the acquisition microservice of Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework.
-
-## Parent
-- https://github.com/oiraqi/immunizer
+This is the Java implementation of the acquisition microservice of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer)
 
 ## Siblings
-- https://github.com/oiraqi/immunizer-instrumentation
-- https://github.com/oiraqi/immunizer-analysis
-- https://github.com/oiraqi/immunizer-collaboration
+- [Instrumentation Microservice of Immunizer](https://github.com/oiraqi/immunizer-instrumentation)
+- [Analysis Microservice of Immunizer](https://github.com/oiraqi/immunizer-analysis)
+- [Collaboration Microservice of Immunizer](https://github.com/oiraqi/immunizer-collaboration)
 
 ## Dependencies
 
