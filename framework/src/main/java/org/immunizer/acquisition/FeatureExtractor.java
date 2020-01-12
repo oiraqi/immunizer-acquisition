@@ -20,10 +20,10 @@ public class FeatureExtractor {
 	private HashMap<String, Integer> dictionary, callStackOccurences, pathToNodeOccurences,
 			aggregatedPathToNodeOccurences, /*flushCounters, */csCounters1, csCounters3;
 	private HashMap<String, HashMap<String, Double>> cmqs;
+	private HashMap<String, Double> sumMinIF1s, sumMinIF3s;
 	private Gson gson;
 	// private HashMap<String, PrintWriter> models;
 	private static FeatureExtractor singleton;
-	private HashMap<String, Double> sumMinIF1s, sumMinIF3s;
 	// private String modelsRepository;
 	// private int bufferSize;
 	// private int skipFirstRecords;	// Use these first records just to learn. Don't log them.  
@@ -424,8 +424,8 @@ public class FeatureExtractor {
 		mb = m;
 		m += (value - m) / c;
 		q += (value - mb) * (value - m);
-		cmq.put("m", m);
 		cmq.put("c", c);
+		cmq.put("m", m);
 		cmq.put("q", q);
 		sd = Math.sqrt(q / c);
 
