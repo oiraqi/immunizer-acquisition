@@ -1,6 +1,6 @@
 # Acquisition Microservice
 
-This is the Java implementation of the Acquisition Microservice of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer)
+This is the Java implementation of the Acquisition Microservice of [Immunizer: The Collaborative Cloud-based Unsupervised Software Immunity Framework](https://github.com/oiraqi/immunizer). It leverages distributed and parallel processing thanks to cluster-computing frameworks such as Apache Spark and Google DataFlow, abstracted and unified through Apache Beam.
 
 ## Siblings
 - [Monitoring Microagent](https://github.com/oiraqi/immunizer-monitoring)
