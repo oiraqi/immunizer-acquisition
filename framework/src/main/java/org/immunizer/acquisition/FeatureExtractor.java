@@ -5,11 +5,7 @@ import java.util.HashMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
-
-import org.immunizer.acquisition.Invocation;
-
 import com.google.gson.JsonElement;
-import com.google.gson.Gson;
 // import java.io.File;
 // import java.io.FileWriter;
 // import java.io.PrintWriter;
@@ -21,7 +17,6 @@ public class FeatureExtractor {
 			aggregatedPathToNodeOccurences, /*flushCounters, */csCounters1, csCounters3;
 	private HashMap<String, HashMap<String, Double>> cmqs;
 	private HashMap<String, Double> sumMinIF1s, sumMinIF3s;
-	private Gson gson;
 	// private HashMap<String, PrintWriter> models;
 	private static FeatureExtractor singleton;
 	// private String modelsRepository;
@@ -37,7 +32,6 @@ public class FeatureExtractor {
 		// flushCounters = new HashMap<String, Integer>();
 		csCounters1 = new HashMap<String, Integer>();
 		csCounters3 = new HashMap<String, Integer>();
-		gson = new Gson();
 		// models = new HashMap<String, PrintWriter>();
 		sumMinIF1s = new HashMap<String, Double>();
 		sumMinIF3s = new HashMap<String, Double>();
@@ -63,18 +57,18 @@ public class FeatureExtractor {
 	 * @param invocation
 	 * @return The Feature Record
 	 */
-	public FeatureRecord extract(Invocation invocation) {
-		if (LazySerializationHelper.skipInvocation(invocation))
+	public FeatureRecord extract(JsonObject invocation) {
+		/*if (LazySerializationHelper.skipInvocation(invocation))
 			return null;
-		
+		*/
 		HashMap<String, Double> record = new HashMap<String, Double>();
 		int[] lengths;
 		double[] minIF1s, minIF3s, pathToNodeMinFreqs, maxNumberVariations, maxStringLengthVariations;
 
-		boolean exception = invocation.getException();
+		boolean exception = invocation.get("exception").getAsBoolean();
 		// long executionTime = invocation.getExecutionTime();
-		int callStackId = invocation.getCallStackId();
-		int numberOfParams = invocation.getNumberOfParams();
+		int callStackId = invocation.get("callStackId").getAsInt();
+		int numberOfParams = invocation.get("numberOfParams").getAsInt();
 		JsonElement parameters = null, result = null;
 		synchronized (callStackOccurences) {
 			if (!callStackOccurences.containsKey("" + callStackId))
@@ -82,10 +76,10 @@ public class FeatureExtractor {
 			else
 				callStackOccurences.put("" + callStackId, callStackOccurences.get("" + callStackId) + 1);
 		}
-		if (numberOfParams > 0 && invocation.returns()) {
+		if (numberOfParams > 0 && invocation.get("_returns").getAsBoolean()) {
 			try {
-				parameters = gson.toJsonTree(invocation.getParams());
-				result = gson.toJsonTree(invocation.getResult());
+				parameters = invocation.get("params");
+				result = invocation.get("result");
 			} catch (Throwable th) {
 				/**
 				 * There are some complex types that Gson does not know how to deal with.
@@ -144,12 +138,12 @@ public class FeatureExtractor {
 				} else if (pi.getAsJsonPrimitive().isNumber())
 					record.put("p_" + i + "_number_variation", maxNumberVariations[i]);
 			}
-			if (invocation.returnsString()) {
+			if (invocation.get("_returnsString").getAsBoolean()) {
 				record.put("r_min_if1", getSmoothedMinIF1("" + callStackId + "_r", minIF1s[numberOfParams]));
 				record.put("r_min_if3", getSmoothedMinIF3("" + callStackId + "_r", minIF3s[numberOfParams]));
 				record.put("r_length_variation",
 						getVariation("" + callStackId + "_r_length", (double) lengths[numberOfParams]));
-			} else if (invocation.returnsNumber()) {
+			} else if (invocation.get("_returnsNumber").getAsBoolean()) {
 				record.put("r_number_variation", maxNumberVariations[numberOfParams]);
 			} else {
 				record.put("r_length_variation",
@@ -162,7 +156,7 @@ public class FeatureExtractor {
 			}
 		} else if (numberOfParams > 0) {
 			try {
-				parameters = gson.toJsonTree(invocation.getParams());
+				parameters = invocation.get("params");
 			} catch (Throwable th) {
 				/**
 				 * There are some complex types that Gson does not know how to deal with.
@@ -214,9 +208,9 @@ public class FeatureExtractor {
 					record.put("p_" + i + "_number_variation", maxNumberVariations[i]);
 				}
 			}
-		} else if (invocation.returns()) {
+		} else if (invocation.get("returns").getAsBoolean()) {
 			try {
-				result = gson.toJsonTree(invocation.getResult());
+				result = invocation.get("result");
 			} catch (Throwable th) {
 				/**
 				 * There are some complex types that Gson does not know how to deal with.
@@ -247,7 +241,7 @@ public class FeatureExtractor {
 			maxStringLengthVariations[0] = 0;
 			build(callStackId, "r", "r", result, -1, false, 0, minIF1s, minIF3s, pathToNodeMinFreqs,
 					maxNumberVariations, maxStringLengthVariations);
-			if (invocation.returnsString()) {
+			if (invocation.get("_returnsString").getAsBoolean()) {
 				record.put("r_min_if1", getSmoothedMinIF1("" + callStackId + "_r", minIF1s[0]));
 				record.put("r_min_if3", getSmoothedMinIF3("" + callStackId + "_r", minIF3s[0]));
 				record.put("r_length_variation", getVariation("" + callStackId + "_r_length", (double) lengths[0]));
@@ -264,9 +258,9 @@ public class FeatureExtractor {
 		}
 		// record.put("execution_time", (double)executionTime);
 		record.put("exception", exception ? (double) 1 : 0);
-		return new FeatureRecord(callStackId, /*invocation.getCallStack(), */invocation.getThreadTag(),
-				/*invocation.getStartTime(), invocation.getEndTime(),*/ invocation.getFullyQualifiedMethodName(),
-				invocation.getVersion(), record/*,
+		return new FeatureRecord(callStackId, /*invocation.getCallStack(), */invocation.get("threadTag").getAsString(),
+				/*invocation.getStartTime(), invocation.getEndTime(),*/ invocation.get("fullyQualifiedMethodName").getAsString(),
+				invocation.get("version").getAsString(), record/*,
 				(parameters != null) ? parameters.toString().replace('"', '_').replace('\'', '_').replace(' ', '_')
 						: null,
 				(result != null) ? result.toString().replace('"', '_').replace('\'', '_').replace(' ', '_') : null*/);
@@ -316,12 +310,12 @@ public class FeatureExtractor {
 	private void build(int callStackId, String pathToNode, String aggregatedPathToNode, JsonElement jsonElement,
 			int paramIndex, boolean isParentAnArray, int numberOfParams, double[] minIF1s, double[] minIF3s,
 			double[] pathToNodeMinFreqs, double[] maxNumberVariations, double[] maxStringLengthVariations) {
-		String _key = "" + callStackId + "_" + aggregatedPathToNode;
+		String cxAggregatedPathToNode = "" + callStackId + "_" + aggregatedPathToNode;
 		synchronized (aggregatedPathToNodeOccurences) {
-			if (!aggregatedPathToNodeOccurences.containsKey(_key))
-				aggregatedPathToNodeOccurences.put(_key, 1);
+			if (!aggregatedPathToNodeOccurences.containsKey(cxAggregatedPathToNode))
+				aggregatedPathToNodeOccurences.put(cxAggregatedPathToNode, 1);
 			else
-				aggregatedPathToNodeOccurences.put(_key, (aggregatedPathToNodeOccurences.get(_key) + 1));
+				aggregatedPathToNodeOccurences.put(cxAggregatedPathToNode, (aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode) + 1));
 		}
 
 		if (jsonElement.isJsonNull())
@@ -357,14 +351,14 @@ public class FeatureExtractor {
 			}
 		} else {
 			JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
-			String __key = "" + callStackId + "_" + pathToNode;
+			String cxPathToNode = "" + callStackId + "_" + pathToNode;
 			int occurences = 0;
 			synchronized (pathToNodeOccurences) {
-				if (!pathToNodeOccurences.containsKey(__key))
+				if (!pathToNodeOccurences.containsKey(cxPathToNode))
 					occurences = 1;
 				else
-					occurences = pathToNodeOccurences.get(__key) + 1;
-				pathToNodeOccurences.put(__key, occurences);
+					occurences = pathToNodeOccurences.get(cxPathToNode) + 1;
+				pathToNodeOccurences.put(cxPathToNode, occurences);
 			}
 			double freq = (double) occurences / callStackOccurences.get("" + callStackId);
 			if (paramIndex >= 0) {
@@ -374,8 +368,8 @@ public class FeatureExtractor {
 				pathToNodeMinFreqs[numberOfParams] = freq;
 			if (primitive.isString()) {
 				String value = primitive.getAsString();
-				double minIF1 = getMinIF(value, 1, _key, aggregatedPathToNodeOccurences.get(_key));
-				double minIF3 = getMinIF(value, 3, _key, aggregatedPathToNodeOccurences.get(_key));
+				double minIF1 = getMinIF(value, 1, cxAggregatedPathToNode, aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode));
+				double minIF3 = getMinIF(value, 3, cxAggregatedPathToNode, aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode));
 				if (paramIndex >= 0) {
 					if (minIF1 < minIF1s[paramIndex])
 						minIF1s[paramIndex] = minIF1;
@@ -387,7 +381,7 @@ public class FeatureExtractor {
 					if (minIF3 < minIF3s[numberOfParams])
 						minIF3s[numberOfParams] = minIF3;
 				}
-				double variation = getVariation("" + callStackId + "_" + aggregatedPathToNode, value.length());
+				double variation = getVariation(cxAggregatedPathToNode, value.length());
 				if (paramIndex >= 0) {
 					if (variation > maxStringLengthVariations[paramIndex])
 						maxStringLengthVariations[paramIndex] = variation;
@@ -395,7 +389,7 @@ public class FeatureExtractor {
 					maxStringLengthVariations[numberOfParams] = variation;
 			} else if (primitive.isNumber()) {
 				double value = primitive.getAsNumber().doubleValue();
-				double variation = getVariation("" + callStackId + "_" + aggregatedPathToNode, value);
+				double variation = getVariation(cxAggregatedPathToNode, value);
 				if (paramIndex >= 0) {
 					if (variation > maxNumberVariations[paramIndex])
 						maxNumberVariations[paramIndex] = variation;

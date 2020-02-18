@@ -1,5 +1,6 @@
 plugins {
         id 'java'
+        id 'scala'
 }
 
 group = 'org.immunizer'
@@ -14,6 +15,7 @@ dependencies {
         implementation 'com.google.code.gson:gson:2.8.6'
         implementation 'com.google.guava:guava:28.1-jre'
         implementation 'org.apache.kafka:kafka-clients:2.4.0'
+        implementation 'org.scala-lang:scala-library:2.13.1'
 }
 
 task libs(type: Jar) {

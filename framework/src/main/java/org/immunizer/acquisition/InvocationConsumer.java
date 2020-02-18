@@ -7,11 +7,14 @@ import org.apache.kafka.clients.consumer.Consumer;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Properties;
+
+import com.google.gson.JsonObject;
+
 import java.time.Duration;
 
 public class InvocationConsumer {
 
-    private Consumer<String, Invocation> consumer;
+    private Consumer<String, JsonObject> consumer;
     private static final String BOOTSTRAP_SERVERS = "localhost:29092";
     private static final String GROUP_ID = "ACQUISITION_GROUP";
     private static final String TOPIC = "Invocations";
@@ -27,13 +30,13 @@ public class InvocationConsumer {
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.setProperty("value.deserializer", "org.immunizer.acquisition.InvocationDeserializer");
 
-        consumer = new KafkaConsumer<String, Invocation>(props);
+        consumer = new KafkaConsumer<String, JsonObject>(props);
         Collection<String> topics = Collections.singletonList(TOPIC);        
         consumer.subscribe(topics);
         consumer.seekToBeginning(Collections.emptyList());
     }
 
-    public ConsumerRecords<String, Invocation> poll (Duration timeout) {
+    public ConsumerRecords<String, JsonObject> poll (Duration timeout) {
         return consumer.poll(timeout);
     }
 

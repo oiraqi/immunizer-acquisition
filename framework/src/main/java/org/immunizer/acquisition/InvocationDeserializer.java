@@ -1,16 +1,16 @@
 package org.immunizer.acquisition;
 
 import org.apache.kafka.common.serialization.Deserializer;
-import com.google.gson.Gson;
 
-public class InvocationDeserializer implements Deserializer<Invocation> {
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;;
 
-    private Gson gson = new Gson();
+public class InvocationDeserializer implements Deserializer<JsonObject> {
 
     public InvocationDeserializer() {}
     
     @Override
-    public Invocation deserialize(String topic, byte[] bytes) {
-        return gson.fromJson(new String(bytes), Invocation.class);
+    public JsonObject deserialize(String topic, byte[] bytes) {
+        return JsonParser.parseString(new String(bytes)).getAsJsonObject();
     }
 }

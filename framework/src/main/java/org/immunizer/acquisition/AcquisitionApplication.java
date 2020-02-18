@@ -5,6 +5,8 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 
 import java.time.Duration;
 
+import com.google.gson.JsonObject;
+
 public class AcquisitionApplication {
 
     public static void main(String[] args) {
@@ -15,8 +17,8 @@ public class AcquisitionApplication {
 
         try {            
             while (true) {
-                ConsumerRecords<String, Invocation> records = consumer.poll(Duration.ofSeconds(15));
-                for (ConsumerRecord<String, Invocation> record : records){
+                ConsumerRecords<String, JsonObject> records = consumer.poll(Duration.ofSeconds(15));
+                for (ConsumerRecord<String, JsonObject> record : records){
                     FeatureRecord featureRecord = extractor.extract(record.value());
                     if (featureRecord != null) {
                         producer.send(featureRecord);
