@@ -6,6 +6,7 @@ This is the Java implementation of the Acquisition Microservice of [Immunizer: T
 - [Monitoring Microagent](https://github.com/oiraqi/immunizer-monitoring)
 - [Analysis Microservice](https://github.com/oiraqi/immunizer-analysis)
 - [Collaboration Microservice](https://github.com/oiraqi/immunizer-collaboration)
+- [Dashboard Microservice](https://github.com/oiraqi/immunizer-dashboard)
 - [Response Microagent](https://github.com/oiraqi/immunizer-response)
 
 ## Dependencies
