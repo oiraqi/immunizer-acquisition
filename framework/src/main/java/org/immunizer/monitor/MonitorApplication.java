@@ -7,7 +7,7 @@ import java.time.Duration;
 
 import com.google.gson.JsonObject;
 
-public class AcquisitionApplication {
+public class MonitorApplication {
 
     public static void main(String[] args) {
         
