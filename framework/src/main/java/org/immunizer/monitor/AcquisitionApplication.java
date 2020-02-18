@@ -1,4 +1,4 @@
-package org.immunizer.acquisition;
+package org.immunizer.monitor;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;

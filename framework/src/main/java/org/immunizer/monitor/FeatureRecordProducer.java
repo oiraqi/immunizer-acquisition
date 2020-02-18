@@ -1,4 +1,4 @@
-package org.immunizer.acquisition;
+package org.immunizer.monitor;
 
 import java.util.Properties;
 
