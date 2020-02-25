@@ -6,9 +6,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonElement;
-// import java.io.File;
-// import java.io.FileWriter;
-// import java.io.PrintWriter;
 import com.google.common.base.Splitter;
 
 public class FeatureExtractor {

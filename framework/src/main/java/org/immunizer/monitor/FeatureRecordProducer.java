@@ -21,6 +21,6 @@ public class FeatureRecordProducer {
     }
 
     public void send(FeatureRecord featureRecord) {
-        producer.send(new ProducerRecord<String, FeatureRecord>(TOPIC, featureRecord));
+        producer.send(new ProducerRecord<String, FeatureRecord>(TOPIC, featureRecord.getCallStackId(), "", featureRecord));
     }
 }
