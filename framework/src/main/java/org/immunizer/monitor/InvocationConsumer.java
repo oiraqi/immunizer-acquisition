@@ -5,11 +5,10 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.Consumer;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
+import java.util.regex.Pattern;
 
 import com.google.gson.JsonObject;
 
@@ -20,7 +19,7 @@ public class InvocationConsumer {
     private Consumer<String, JsonObject> consumer;
     private static final String BOOTSTRAP_SERVERS = "localhost:29092";
     private static final String GROUP_ID = "MONITORING_GROUP";
-    private static final String TOPIC = "Invocations";
+    private static final String TOPIC_PATTERN = "Invocations_[0-9]+";
     private static int SIZE = 50000;
 
     public InvocationConsumer() {
@@ -35,8 +34,7 @@ public class InvocationConsumer {
         props.setProperty("value.deserializer", "org.immunizer.acquisition.InvocationDeserializer");
 
         consumer = new KafkaConsumer<String, JsonObject>(props);
-        Collection<String> topics = Collections.singletonList(TOPIC);
-        consumer.subscribe(topics);
+        consumer.subscribe(Pattern.compile(TOPIC_PATTERN));
         // consumer.seekToBeginning(Collections.emptyList());
     }
 
@@ -47,6 +45,7 @@ public class InvocationConsumer {
          */
         Map<TopicPartition, Long> beginningOffsets = consumer.beginningOffsets(consumer.assignment());
         consumer.endOffsets(consumer.assignment()).forEach((partition, endOffset) -> {
+            System.out.println(partition.topic());
             if (endOffset - consumer.position(partition) < SIZE) {
                 if (endOffset - SIZE > beginningOffsets.get(partition)) {
                     consumer.seek(partition, endOffset - SIZE);

@@ -19,7 +19,7 @@ public class MonitorApplication {
 
     public static void main(String[] args) {
 
-        SparkConf conf = new SparkConf().setAppName("Test").setMaster("master");
+        SparkConf conf = new SparkConf().setAppName("Monitor").setMaster("master");
         JavaSparkContext sc = new JavaSparkContext(conf);
         InvocationConsumer consumer = new InvocationConsumer();
         /*
