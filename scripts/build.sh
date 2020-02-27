@@ -1,0 +1,2 @@
+cd ../framework
+./gradlew libs

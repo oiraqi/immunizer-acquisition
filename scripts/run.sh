@@ -1,4 +1,4 @@
 cd ../framework
 ./gradlew libs
 cd build/libs
-java -cp libs-1.0.jar org.immunizer.acquisition.AcquisitionApplication
+java -cp libs-1.0.jar org.immunizer.monitor.MonitorApplication
