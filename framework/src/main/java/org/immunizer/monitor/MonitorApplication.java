@@ -19,8 +19,8 @@ public class MonitorApplication {
 
     public static void main(String[] args) {
 
-        // SparkConf conf = new SparkConf().setAppName("Monitor").setMaster("spark://spark-master:7077");
-        // JavaSparkContext sc = new JavaSparkContext(conf);
+        SparkConf conf = new SparkConf().setAppName("Monitor").setMaster("spark://spark-master:7077");
+        JavaSparkContext sc = new JavaSparkContext(conf);
         InvocationConsumer consumer = new InvocationConsumer();
         /*
          * FeatureExtractor extractor = FeatureExtractor.getSingleton();
@@ -30,7 +30,7 @@ public class MonitorApplication {
         try {
             while (true) {
                 Vector<JsonObject> records = consumer.poll(Duration.ofSeconds(60));
-                /*JavaRDD<JsonObject> rdd = sc.parallelize(records);
+                JavaRDD<JsonObject> rdd = sc.parallelize(records);
 
                 JavaRDD<String> model = rdd.flatMap(new ModelMapper());
 
@@ -50,11 +50,11 @@ public class MonitorApplication {
                         .mapToPair(record -> new Tuple2<String, Integer>(record, 1)).reduceByKey((a, b) -> a + b);
 
                 JavaPairRDD<String, Integer> splits3Model = model.filter(record -> record.startsWith("splits_3_"))
-                        .mapToPair(record -> new Tuple2<String, Integer>(record, 1)).reduceByKey((a, b) -> a + b);*/
+                        .mapToPair(record -> new Tuple2<String, Integer>(record, 1)).reduceByKey((a, b) -> a + b);
             }
         } finally {
             consumer.close();
-            // sc.close();
+            sc.close();
         }
     }
 
