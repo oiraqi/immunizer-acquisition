@@ -17,7 +17,7 @@ import java.time.Duration;
 public class InvocationConsumer {
 
     private Consumer<String, JsonObject> consumer;
-    private static final String BOOTSTRAP_SERVERS = "localhost:29092";
+    private static final String BOOTSTRAP_SERVERS = "kafka:9092";
     private static final String GROUP_ID = "MONITORING_GROUP";
     private static final String TOPIC_PATTERN = "Invocations_[0-9]+";
     private static int SIZE = 50000;
