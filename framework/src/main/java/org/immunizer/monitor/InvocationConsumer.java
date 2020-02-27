@@ -43,10 +43,9 @@ public class InvocationConsumer {
          * Make sure to poll at least SIZE records. Otherwise poll all records
          * from beginning offsets.
          */
-        System.out.println(consumer.assignment().size());
         Map<TopicPartition, Long> beginningOffsets = consumer.beginningOffsets(consumer.assignment());
         consumer.endOffsets(consumer.assignment()).forEach((partition, endOffset) -> {
-            System.out.println(partition.topic());
+            System.out.println(partition.topic() + " : " + endOffset);
             if (endOffset - consumer.position(partition) < SIZE) {
                 if (endOffset - SIZE > beginningOffsets.get(partition)) {
                     consumer.seek(partition, endOffset - SIZE);
@@ -65,6 +64,7 @@ public class InvocationConsumer {
         records.forEach(record -> {
             record.value().addProperty("timestamp", record.timestamp());
             vector.add(record.value());
+            System.out.println(record.timestamp());
         });
         
         return vector;
