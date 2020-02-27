@@ -19,7 +19,7 @@ public class MonitorApplication {
 
     public static void main(String[] args) {
 
-        SparkConf conf = new SparkConf().setAppName("Monitor").setMaster("spark://spark-master:8080");
+        SparkConf conf = new SparkConf().setAppName("Monitor").setMaster("spark://spark-master:7077");
         JavaSparkContext sc = new JavaSparkContext(conf);
         InvocationConsumer consumer = new InvocationConsumer();
         /*
