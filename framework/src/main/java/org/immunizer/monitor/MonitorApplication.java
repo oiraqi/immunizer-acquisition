@@ -29,7 +29,7 @@ public class MonitorApplication {
 
         try {
             while (true) {
-                Vector<JsonObject> records = consumer.poll(Duration.ofSeconds(300));
+                Vector<JsonObject> records = consumer.poll(Duration.ofSeconds(10));
                 /*JavaRDD<JsonObject> rdd = sc.parallelize(records);
 
                 JavaRDD<String> model = rdd.flatMap(new ModelMapper());

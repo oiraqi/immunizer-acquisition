@@ -43,6 +43,7 @@ public class InvocationConsumer {
          * Make sure to poll at least SIZE records. Otherwise poll all records
          * from beginning offsets.
          */
+        System.out.println(consumer.assignment().size());
         Map<TopicPartition, Long> beginningOffsets = consumer.beginningOffsets(consumer.assignment());
         consumer.endOffsets(consumer.assignment()).forEach((partition, endOffset) -> {
             System.out.println(partition.topic());
