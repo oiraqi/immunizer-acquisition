@@ -2,8 +2,6 @@ package org.immunizer.monitor;
 
 import org.apache.kafka.common.serialization.Deserializer;
 
-import java.io.StringReader;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -13,6 +11,6 @@ public class InvocationDeserializer implements Deserializer<JsonObject> {
     
     @Override
     public JsonObject deserialize(String topic, byte[] bytes) {
-        return JsonParser.parseReader(new StringReader(new String(bytes))).getAsJsonObject();
+        return new JsonParser().parse(new String(bytes)).getAsJsonObject();
     }
 }
