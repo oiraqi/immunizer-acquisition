@@ -98,14 +98,14 @@ public class ModelMapper implements FlatMapFunction<JsonObject, String> {
 					build(callStackId, pathToNode + '_' + i, aggregatedPathToNode, jsonArray.get(i), paramIndex, true,
 							numberOfParams, model);
 		} else if (jsonElement.isJsonObject()) {
-			/*JsonObject jsonObject = jsonElement.getAsJsonObject();
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
 			Iterator<String> keys = jsonObject.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
 				build(callStackId, pathToNode.isEmpty() ? key : pathToNode + '_' + key,
 						aggregatedPathToNode.isEmpty() ? key : aggregatedPathToNode + '_' + key, jsonObject.get(key),
 						paramIndex, isParentAnArray, numberOfParams, model);
-			}*/
+			}
 		} else {
             JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
             model.add("paths_" + callStackId + "_" + pathToNode);

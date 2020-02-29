@@ -337,7 +337,7 @@ public class FeatureExtractor {
 							numberOfParams, minIF1s, minIF3s, pathToNodeMinFreqs, maxNumberVariations,
 							maxStringLengthVariations);
 		} else if (jsonElement.isJsonObject()) {
-			/*JsonObject jsonObject = jsonElement.getAsJsonObject();
+			JsonObject jsonObject = jsonElement.getAsJsonObject();
 			Iterator<String> keys = jsonObject.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
@@ -345,7 +345,7 @@ public class FeatureExtractor {
 						aggregatedPathToNode.isEmpty() ? key : aggregatedPathToNode + '_' + key, jsonObject.get(key),
 						paramIndex, isParentAnArray, numberOfParams, minIF1s, minIF3s, pathToNodeMinFreqs,
 						maxNumberVariations, maxStringLengthVariations);
-			}*/
+			}
 		} else {
 			JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
 			String cxPathToNode = "" + callStackId + "_" + pathToNode;

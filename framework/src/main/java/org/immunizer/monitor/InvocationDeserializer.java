@@ -11,6 +11,6 @@ public class InvocationDeserializer implements Deserializer<JsonObject> {
     
     @Override
     public JsonObject deserialize(String topic, byte[] bytes) {
-        return new JsonParser().parse(new String(bytes)).getAsJsonObject();
+        return JsonParser.parseString(new String(bytes)).getAsJsonObject();
     }
 }
