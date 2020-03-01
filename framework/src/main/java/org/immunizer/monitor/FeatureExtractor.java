@@ -1,6 +1,7 @@
 package org.immunizer.monitor;
 
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.HashMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -338,9 +339,17 @@ public class FeatureExtractor {
 							maxStringLengthVariations);
 		} else if (jsonElement.isJsonObject()) {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			Iterator<String> keys = jsonObject.keySet().iterator();
+			/*Iterator<String> keys = jsonObject.keySet().iterator();
 			while (keys.hasNext()) {
 				String key = (String) keys.next();
+				build(callStackId, pathToNode.isEmpty() ? key : pathToNode + '_' + key,
+						aggregatedPathToNode.isEmpty() ? key : aggregatedPathToNode + '_' + key, jsonObject.get(key),
+						paramIndex, isParentAnArray, numberOfParams, minIF1s, minIF3s, pathToNodeMinFreqs,
+						maxNumberVariations, maxStringLengthVariations);
+			}*/
+			Iterator<Entry<String, JsonElement>> entries = jsonObject.entrySet().iterator();
+			while (entries.hasNext()) {
+				String key = (String) entries.next().getKey();
 				build(callStackId, pathToNode.isEmpty() ? key : pathToNode + '_' + key,
 						aggregatedPathToNode.isEmpty() ? key : aggregatedPathToNode + '_' + key, jsonObject.get(key),
 						paramIndex, isParentAnArray, numberOfParams, minIF1s, minIF3s, pathToNodeMinFreqs,
