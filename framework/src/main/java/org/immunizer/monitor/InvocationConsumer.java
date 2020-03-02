@@ -20,7 +20,7 @@ public class InvocationConsumer {
     private static final String BOOTSTRAP_SERVERS = "kafka:9092";
     private static final String GROUP_ID = "MONITORING_GROUP";
     private static final String TOPIC_PATTERN = "Invocations_[0-9]+";
-    private static int SIZE = 50000;
+    private static int SIZE = 0;
 
     public InvocationConsumer() {
         Properties props = new Properties();

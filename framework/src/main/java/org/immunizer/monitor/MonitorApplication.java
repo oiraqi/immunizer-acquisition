@@ -51,6 +51,9 @@ public class MonitorApplication {
 
                 JavaPairRDD<String, Integer> splits3Model = model.filter(record -> record.startsWith("splits_3_"))
                         .mapToPair(record -> new Tuple2<String, Integer>(record, 1)).reduceByKey((a, b) -> a + b);
+                splits3Model.foreach(entry -> {
+                    System.out.println(entry._1() + ": "  + entry._2());
+                });
             }
         } finally {
             consumer.close();
