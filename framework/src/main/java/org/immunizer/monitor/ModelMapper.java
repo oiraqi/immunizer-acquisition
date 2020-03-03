@@ -32,11 +32,12 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	public Iterator<String> call(byte[] invocationBytes) {
         JsonParser parser = new JsonParser();
 		JsonObject invocation = parser.parse(new String(invocationBytes)).getAsJsonObject();
-		int[] lengths;		
+		System.out.println(invocation);
 		int callStackId = invocation.get("callStackId").getAsInt();
 		int numberOfParams = invocation.get("numberOfParams").getAsInt();
         JsonElement parameters = null, result = null;
-        Vector<String> model = new Vector<String>();
+		Vector<String> model = new Vector<String>();
+		int[] lengths;
 		
 		if (numberOfParams > 0 && invocation.get("_returns").getAsBoolean()) {
 			parameters = invocation.get("params");
