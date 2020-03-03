@@ -8,18 +8,21 @@ import java.util.Map.Entry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonParser;
 
 import org.apache.spark.api.java.function.FlatMapFunction;
 
 import com.google.gson.JsonElement;
 import com.google.common.base.Splitter;
 
-public class ModelMapper implements FlatMapFunction<JsonObject, String> {
+public class ModelMapper implements FlatMapFunction<byte[], String> {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
+	JsonParser parser = new JsonParser();
 
 	/**
 	 * Extracts features from invocation Uses build method to build features
@@ -28,9 +31,10 @@ public class ModelMapper implements FlatMapFunction<JsonObject, String> {
 	 * @param invocation
 	 * @return The Feature Record
 	 */
-	public Iterator<String> call(JsonObject invocation) {
+	public Iterator<String> call(byte[] invocationBytes) {
         
-        int[] lengths;
+		int[] lengths;
+		JsonObject invocation = parser.parse(new String(invocationBytes)).getAsJsonObject();
 		int callStackId = invocation.get("callStackId").getAsInt();
 		int numberOfParams = invocation.get("numberOfParams").getAsInt();
         JsonElement parameters = null, result = null;

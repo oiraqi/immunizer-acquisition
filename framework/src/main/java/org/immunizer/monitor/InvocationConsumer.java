@@ -10,13 +10,11 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
-import com.google.gson.JsonObject;
-
 import java.time.Duration;
 
 public class InvocationConsumer {
 
-    private Consumer<String, JsonObject> consumer;
+    private Consumer<String, byte[]> consumer;
     private static final String BOOTSTRAP_SERVERS = "kafka:9092";
     private static final String GROUP_ID = "MONITORING_GROUP";
     private static final String TOPIC_PATTERN = "Invocations_[0-9]+";
@@ -33,12 +31,12 @@ public class InvocationConsumer {
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.setProperty("value.deserializer", "org.immunizer.monitor.InvocationDeserializer");
 
-        consumer = new KafkaConsumer<String, JsonObject>(props);
+        consumer = new KafkaConsumer<String, byte[]>(props);
         consumer.subscribe(Pattern.compile(TOPIC_PATTERN));
         // consumer.seekToBeginning(Collections.emptyList());
     }
 
-    public Vector<JsonObject> poll (Duration timeout) {
+    public Vector<byte[]> poll (Duration timeout) {
         /**
          * Make sure to poll at least SIZE records. Otherwise poll all records
          * from beginning offsets.
@@ -59,12 +57,13 @@ public class InvocationConsumer {
          * Append a timestamp to each record as an id, since each record may
          * be polled and processed more than once.
          */
-        ConsumerRecords<String, JsonObject> records = consumer.poll(timeout);
-        Vector<JsonObject> vector = new Vector<JsonObject>();
+        ConsumerRecords<String, byte[]> records = consumer.poll(timeout);
+        Vector<byte[]> vector = new Vector<byte[]>();
         records.forEach(record -> {
-            record.value().addProperty("timestamp", record.timestamp());
+            // record.value().addProperty("timestamp", record.timestamp());
+            // vector.add(record.value().toString());
             vector.add(record.value());
-            System.out.println(record.timestamp());
+            // System.out.println(record.timestamp());
         });
         
         return vector;
