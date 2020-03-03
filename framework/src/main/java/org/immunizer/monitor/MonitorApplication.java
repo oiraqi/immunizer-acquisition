@@ -40,8 +40,8 @@ public class MonitorApplication {
                             Double value = Double.valueOf(record.substring(record.lastIndexOf('_') + 1));
                             return new Tuple2<String, Double>(key, value);
                         }).aggregateByKey(new StatCounter(), StatCounter::merge, StatCounter::merge)
-                        .map(stats -> new Tuple3<String, Double, Double>(stats._1(), 
-                            stats._2().stdev(), stats._2().mean()));
+                        .map(stats -> new Tuple3<String, Double, Double>(stats._1(), stats._2().stdev(),
+                                stats._2().mean()));
 
                 JavaPairRDD<String, Integer> pathsModel = model.filter(record -> record.startsWith("paths_"))
                         .mapToPair(record -> new Tuple2<String, Integer>(record, 1)).reduceByKey((a, b) -> a + b);
@@ -51,8 +51,19 @@ public class MonitorApplication {
 
                 JavaPairRDD<String, Integer> splits3Model = model.filter(record -> record.startsWith("splits_3_"))
                         .mapToPair(record -> new Tuple2<String, Integer>(record, 1)).reduceByKey((a, b) -> a + b);
+
+                numbersModel.foreach(entry -> {
+                    System.out.println(entry._1() + ": " + entry._2() + " | " + entry._3());
+                });
+                
+                pathsModel.foreach(entry -> {
+                    System.out.println(entry._1() + ": " + entry._2());
+                });
+                splits1Model.foreach(entry -> {
+                    System.out.println(entry._1() + ": " + entry._2());
+                });
                 splits3Model.foreach(entry -> {
-                    System.out.println(entry._1() + ": "  + entry._2());
+                    System.out.println(entry._1() + ": " + entry._2());
                 });
             }
         } finally {
