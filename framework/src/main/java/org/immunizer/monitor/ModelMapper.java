@@ -33,17 +33,15 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
         JsonParser parser = new JsonParser();
 		JsonObject invocation = parser.parse(new String(invocationBytes)).getAsJsonObject();
 		System.out.println(invocation);
-		int callStackId = invocation.get("callStackId").getAsInt();
-		int numberOfParams = invocation.get("numberOfParams").getAsInt();
-        JsonElement parameters = null, result = null;
+		int callStackId = invocation.get("callStackId").getAsInt();		
+		JsonElement parameters = invocation.get("params"), result = null;
+		int numberOfParams = parameters.getAsJsonArray().size();
 		Vector<String> model = new Vector<String>();
 		int[] lengths;
 		
 		if (numberOfParams > 0 && invocation.get("_returns").getAsBoolean()) {
-			parameters = invocation.get("params");
             result = invocation.get("result");
-			lengths = new int[numberOfParams + 1];
-			
+			lengths = new int[numberOfParams + 1];			
 			for (int i = 0; i < numberOfParams; i++) {
 				lengths[i] = parameters.getAsJsonArray().get(i).toString().length();
 			}
@@ -52,7 +50,6 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			build(callStackId, "p", "p", parameters, -1, false, numberOfParams, model);
 			build(callStackId, "r", "r", result, -1, false, numberOfParams, model);
 		} else if (numberOfParams > 0) {
-			parameters = invocation.get("params");
             lengths = new int[numberOfParams];
             for (int i = 0; i < numberOfParams; i++) {
                 lengths[i] = parameters.getAsJsonArray().get(i).toString().length();
