@@ -22,8 +22,6 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	JsonParser parser = new JsonParser();
-
 	/**
 	 * Extracts features from invocation Uses build method to build features
 	 * recursively for each parameter tree or returned value tree
@@ -32,9 +30,9 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	 * @return The Feature Record
 	 */
 	public Iterator<String> call(byte[] invocationBytes) {
-        
-		int[] lengths;
+        JsonParser parser = new JsonParser();
 		JsonObject invocation = parser.parse(new String(invocationBytes)).getAsJsonObject();
+		int[] lengths;		
 		int callStackId = invocation.get("callStackId").getAsInt();
 		int numberOfParams = invocation.get("numberOfParams").getAsInt();
         JsonElement parameters = null, result = null;
