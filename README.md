@@ -29,8 +29,7 @@ All dependencies are managed through Gradle.
 - Apache Kafka Clients API 2.4.0
 
 ## How To
-- Clone this repository
-- cd framework
-- ./gradlew libs
-- cd build/libs
-- java -cp libs-1.0.jar org.immunizer.monitor.MonitorApplication
+- Please refer to the parent project [How To](https://github.com/oiraqi/immunizer#how-to)
+
+## Publications
+- Please refer to the parent project [Publications](https://github.com/oiraqi/immunizer#publications)
