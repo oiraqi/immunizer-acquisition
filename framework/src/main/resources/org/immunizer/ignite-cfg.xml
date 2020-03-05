@@ -43,7 +43,12 @@
                     <property name="name" value="stdevsRDD"/>
                     <!-- Set a cache mode. -->
                     <property name="cacheMode" value="PARTITIONED"/>
-                    <property name="indexedTypes"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value>java.lang.String</value>
+                            <value>java.lang.Double</value>
+                        </list>
+                    </property>
                     <!-- Set atomicity mode. -->
                     <property name="atomicityMode" value="ATOMIC"/>
                     <!-- Configure a number of backups. -->
@@ -54,7 +59,12 @@
                     <property name="name" value="meansRDD"/>
                     <!-- Set a cache mode. -->
                     <property name="cacheMode" value="PARTITIONED"/>
-                    <property name="indexedTypes"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value>java.lang.String</value>
+                            <value>java.lang.Double</value>
+                        </list>
+                    </property>
                     <!-- Set atomicity mode. -->
                     <property name="atomicityMode" value="ATOMIC"/>
                     <!-- Configure a number of backups. -->
@@ -65,7 +75,12 @@
                     <property name="name" value="pathsRDD"/>
                     <!-- Set a cache mode. -->
                     <property name="cacheMode" value="PARTITIONED"/>
-                    <property name="indexedTypes"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value>java.lang.String</value>
+                            <value>java.lang.Integer</value>
+                        </list>
+                    </property>
                     <!-- Set atomicity mode. -->
                     <property name="atomicityMode" value="ATOMIC"/>
                     <!-- Configure a number of backups. -->
@@ -76,7 +91,12 @@
                     <property name="name" value="splits1RDD"/>
                     <!-- Set a cache mode. -->
                     <property name="cacheMode" value="PARTITIONED"/>
-                    <property name="indexedTypes"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value>java.lang.String</value>
+                            <value>java.lang.Integer</value>
+                        </list>
+                    </property>
                     <!-- Set atomicity mode. -->
                     <property name="atomicityMode" value="ATOMIC"/>
                     <!-- Configure a number of backups. -->
@@ -87,7 +107,12 @@
                     <property name="name" value="splits3RDD"/>
                     <!-- Set a cache mode. -->
                     <property name="cacheMode" value="PARTITIONED"/>
-                    <property name="indexedTypes"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value>java.lang.String</value>
+                            <value>java.lang.Integer</value>
+                        </list>
+                    </property>
                     <!-- Set atomicity mode. -->
                     <property name="atomicityMode" value="ATOMIC"/>
                     <!-- Configure a number of backups. -->

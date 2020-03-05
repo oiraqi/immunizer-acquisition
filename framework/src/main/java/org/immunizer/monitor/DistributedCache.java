@@ -21,8 +21,8 @@ public class DistributedCache {
     private JavaIgniteRDD<String, Integer> splits3RDD;
 
     public DistributedCache(JavaSparkContext sc) {
-        igniteContext1 = new JavaIgniteContext<String, Double>(sc, "examples/config/spark/example-shared-rdd.xml");
-        igniteContext2 = new JavaIgniteContext<String, Integer>(sc, "examples/config/spark/example-shared-rdd.xml");
+        igniteContext1 = new JavaIgniteContext<String, Double>(sc, "org/immunizer/ignite-cfg.xml");
+        igniteContext2 = new JavaIgniteContext<String, Integer>(sc, "org/immunizer/ignite-cfg.xml");
 
         stdevsRDD = igniteContext1.fromCache("stdevsRDD");
         meansRDD = igniteContext1.fromCache("meansRDD");
