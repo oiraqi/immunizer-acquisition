@@ -20,6 +20,7 @@ dependencies {
 }
 
 task libs(type: Jar) {
+    zip64 true
     manifest { }
     archiveBaseName = 'libs'
     from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
