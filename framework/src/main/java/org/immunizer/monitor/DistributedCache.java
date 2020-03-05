@@ -1,7 +1,7 @@
 package org.immunizer.monitor;
 
-/*import org.apache.ignite.spark.JavaIgniteContext;
-import org.apache.ignite.spark.JavaIgniteRDD;*/
+import org.apache.ignite.spark.JavaIgniteContext;
+import org.apache.ignite.spark.JavaIgniteRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -12,23 +12,23 @@ import scala.Tuple2;
 
 public class DistributedCache {
 
-    /*private JavaIgniteContext<String, Double> igniteContext1;
+    private JavaIgniteContext<String, Double> igniteContext1;
     private JavaIgniteContext<String, Integer> igniteContext2;
     private JavaIgniteRDD<String, Double> stdevsRDD;
     private JavaIgniteRDD<String, Double> meansRDD;
     private JavaIgniteRDD<String, Integer> pathsRDD;
     private JavaIgniteRDD<String, Integer> splits1RDD;
-    private JavaIgniteRDD<String, Integer> splits3RDD;*/
+    private JavaIgniteRDD<String, Integer> splits3RDD;
 
     public DistributedCache(JavaSparkContext sc) {
-        /*igniteContext1 = new JavaIgniteContext<String, Double>(sc, "immunizer/ignite-cfg.xml");
+        igniteContext1 = new JavaIgniteContext<String, Double>(sc, "immunizer/ignite-cfg.xml");
         igniteContext2 = new JavaIgniteContext<String, Integer>(sc, "immunizer/ignite-cfg.xml");
 
         stdevsRDD = igniteContext1.fromCache("stdevsRDD");
         meansRDD = igniteContext1.fromCache("meansRDD");
         pathsRDD = igniteContext2.fromCache("pathsRDD");
         splits1RDD = igniteContext2.fromCache("splits1RDD");
-        splits3RDD = igniteContext2.fromCache("splits3RDD");*/
+        splits3RDD = igniteContext2.fromCache("splits3RDD");
     }
 
     public void saveModel(JavaRDD<String> model) {
@@ -68,10 +68,10 @@ public class DistributedCache {
             System.out.println("SPLIT3: " + entry._1() + ": " + entry._2());
         });
 
-        /*stdevsRDD.savePairs(stdevsModel);
+        stdevsRDD.savePairs(stdevsModel);
         meansRDD.savePairs(meansModel);
         pathsRDD.savePairs(pathsModel);
         splits1RDD.savePairs(splits1Model);
-        splits3RDD.savePairs(splits3Model);*/
+        splits3RDD.savePairs(splits3Model);
     }
 }
