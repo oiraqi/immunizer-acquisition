@@ -59,11 +59,9 @@ public class InvocationConsumer {
          */
         ConsumerRecords<String, byte[]> records = consumer.poll(timeout);
         Vector<byte[]> vector = new Vector<byte[]>();
-        records.forEach(record -> {
-            // record.value().addProperty("timestamp", record.timestamp());
-            // vector.add(record.value().toString());
+        records.forEach(record -> {            
             vector.add(record.value());
-            // System.out.println(record.timestamp());
+            System.out.println(new String(record.value()));
         });
         
         return vector;

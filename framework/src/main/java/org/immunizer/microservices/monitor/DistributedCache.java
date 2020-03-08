@@ -52,26 +52,26 @@ public class DistributedCache {
         JavaPairRDD<String, Integer> splits3Model = model.filter(record -> record.startsWith("splits_3_"))
                 .mapToPair(record -> new Tuple2<String, Integer>(record.substring(9), 1)).reduceByKey((a, b) -> a + b);
 
-        stdevsModel.foreach(entry -> {
-            System.out.println("STDEV: " + entry._1() + ": " + entry._2());
-        });
-        meansModel.foreach(entry -> {
-            System.out.println("MEAN: " + entry._1() + ": " + entry._2());
-        });
-        pathsModel.foreach(entry -> {
-            System.out.println("PATH: " + entry._1() + ": " + entry._2());
-        });
-        splits1Model.foreach(entry -> {
-            System.out.println("SPLIT1: " + entry._1() + ": " + entry._2());
-        });
-        splits3Model.foreach(entry -> {
-            System.out.println("SPLIT3: " + entry._1() + ": " + entry._2());
-        });
-
         stdevsRDD.savePairs(stdevsModel);
         meansRDD.savePairs(meansModel);
         pathsRDD.savePairs(pathsModel);
         splits1RDD.savePairs(splits1Model);
         splits3RDD.savePairs(splits3Model);
+
+        stdevsRDD.foreach(entry -> {
+            System.out.println("STDEV: " + entry._1() + ": " + entry._2());
+        });
+        meansRDD.foreach(entry -> {
+            System.out.println("MEAN: " + entry._1() + ": " + entry._2());
+        });
+        pathsRDD.foreach(entry -> {
+            System.out.println("PATH: " + entry._1() + ": " + entry._2());
+        });
+        splits1RDD.foreach(entry -> {
+            System.out.println("SPLIT1: " + entry._1() + ": " + entry._2());
+        });
+        splits3RDD.foreach(entry -> {
+            System.out.println("SPLIT3: " + entry._1() + ": " + entry._2());
+        });
     }
 }
