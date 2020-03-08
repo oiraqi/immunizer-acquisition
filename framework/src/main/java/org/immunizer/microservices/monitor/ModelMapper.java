@@ -84,7 +84,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			JsonArray jsonArray = jsonElement.getAsJsonArray();
 			if (pathToNode.equals("p")) {
 				for (int i = 0; i < numberOfParams; i++) {
-					build(callStackId, "p" + '_' + i, "p" + '_' + i, jsonArray.get(i), i, false, numberOfParams, model);
+					build(callStackId, "p" + i, "p" + i, jsonArray.get(i), i, false, numberOfParams, model);
 				}
 			} else
 				for (int i = 0; i < jsonArray.size(); i++)
