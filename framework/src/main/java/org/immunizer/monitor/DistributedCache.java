@@ -20,7 +20,7 @@ public class DistributedCache {
     private JavaIgniteRDD<String, Integer> splits1RDD;
     private JavaIgniteRDD<String, Integer> splits3RDD;
 
-    public DistributedCache(JavaSparkContext sc) {
+    public DistributedCache(JavaSparkContext sc) {        
         igniteContext1 = new JavaIgniteContext<String, Double>(sc, "immunizer/ignite-cfg.xml");
         igniteContext2 = new JavaIgniteContext<String, Integer>(sc, "immunizer/ignite-cfg.xml");
 
