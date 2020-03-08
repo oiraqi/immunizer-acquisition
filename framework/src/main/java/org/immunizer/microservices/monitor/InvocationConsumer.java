@@ -1,4 +1,4 @@
-package org.immunizer.monitor;
+package org.immunizer.microservices.monitor;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
@@ -29,7 +29,7 @@ public class InvocationConsumer {
         props.setProperty("auto.commit.interval.ms", "1000");
         // props.put("session.timeout.ms", "30000");
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.setProperty("value.deserializer", "org.immunizer.monitor.InvocationDeserializer");
+        props.setProperty("value.deserializer", "org.immunizer.microservices.monitor.InvocationDeserializer");
 
         consumer = new KafkaConsumer<String, byte[]>(props);
         consumer.subscribe(Pattern.compile(TOPIC_PATTERN));

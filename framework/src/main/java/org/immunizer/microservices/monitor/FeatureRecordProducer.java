@@ -1,4 +1,4 @@
-package org.immunizer.monitor;
+package org.immunizer.microservices.monitor;
 
 import java.util.Properties;
 
@@ -16,7 +16,7 @@ public class FeatureRecordProducer {
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.immunizer.acquisition.FeatureRecordSerializer");
+        props.put("value.serializer", "org.immunizer.microservices.monitor.FeatureRecordSerializer");
         producer = new KafkaProducer<String, FeatureRecord>(props);
     }
 

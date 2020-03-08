@@ -1,4 +1,4 @@
-package org.immunizer.monitor;
+package org.immunizer.microservices.monitor;
 
 import java.util.Iterator;
 import java.util.Map.Entry;

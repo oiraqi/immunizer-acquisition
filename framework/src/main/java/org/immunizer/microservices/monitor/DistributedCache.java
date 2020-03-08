@@ -1,4 +1,4 @@
-package org.immunizer.monitor;
+package org.immunizer.microservices.monitor;
 
 import org.apache.ignite.spark.JavaIgniteContext;
 import org.apache.ignite.spark.JavaIgniteRDD;

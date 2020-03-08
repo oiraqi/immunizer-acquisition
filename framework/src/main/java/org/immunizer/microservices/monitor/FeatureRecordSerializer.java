@@ -1,4 +1,4 @@
-package org.immunizer.monitor;
+package org.immunizer.microservices.monitor;
 
 import org.apache.kafka.common.serialization.Serializer;
 import com.google.gson.Gson;
