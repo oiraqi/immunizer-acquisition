@@ -14,11 +14,8 @@ public class DistributedCache {
 
     private JavaIgniteContext<String, Double> igniteContext1;
     private JavaIgniteContext<String, Integer> igniteContext2;
-    private JavaIgniteRDD<String, Double> stdevsRDD;
-    private JavaIgniteRDD<String, Double> meansRDD;
-    private JavaIgniteRDD<String, Integer> pathsRDD;
-    private JavaIgniteRDD<String, Integer> splits1RDD;
-    private JavaIgniteRDD<String, Integer> splits3RDD;
+    private JavaIgniteRDD<String, Double> stdevsRDD, meansRDD;
+    private JavaIgniteRDD<String, Integer> pathsRDD, aggPathsRDD, splits1RDD, splits3RDD;
 
     public DistributedCache(JavaSparkContext sc) {        
         igniteContext1 = new JavaIgniteContext<String, Double>(sc, "immunizer/ignite-cfg.xml");
@@ -27,6 +24,7 @@ public class DistributedCache {
         stdevsRDD = igniteContext1.fromCache("stdevsRDD");
         meansRDD = igniteContext1.fromCache("meansRDD");
         pathsRDD = igniteContext2.fromCache("pathsRDD");
+        aggPathsRDD = igniteContext2.fromCache("aggpathsRDD");
         splits1RDD = igniteContext2.fromCache("splits1RDD");
         splits3RDD = igniteContext2.fromCache("splits3RDD");
     }
@@ -45,6 +43,8 @@ public class DistributedCache {
 
         JavaPairRDD<String, Integer> pathsModel = model.filter(record -> record.startsWith("paths_"))
                 .mapToPair(record -> new Tuple2<String, Integer>(record.substring(6), 1)).reduceByKey((a, b) -> a + b);
+        JavaPairRDD<String, Integer> aggPathsModel = model.filter(record -> record.startsWith("aggpaths_"))
+                .mapToPair(record -> new Tuple2<String, Integer>(record.substring(9), 1)).reduceByKey((a, b) -> a + b);
 
         JavaPairRDD<String, Integer> splits1Model = model.filter(record -> record.startsWith("splits_1_"))
                 .mapToPair(record -> new Tuple2<String, Integer>(record.substring(9), 1)).reduceByKey((a, b) -> a + b);
@@ -55,6 +55,7 @@ public class DistributedCache {
         stdevsRDD.savePairs(stdevsModel);
         meansRDD.savePairs(meansModel);
         pathsRDD.savePairs(pathsModel);
+        aggPathsRDD.savePairs(aggPathsModel);
         splits1RDD.savePairs(splits1Model);
         splits3RDD.savePairs(splits3Model);
 
@@ -66,6 +67,9 @@ public class DistributedCache {
         });
         pathsRDD.foreach(entry -> {
             System.out.println("PATH: " + entry._1() + ": " + entry._2());
+        });
+        aggPathsRDD.foreach(entry -> {
+            System.out.println("AGGPATH: " + entry._1() + ": " + entry._2());
         });
         splits1RDD.foreach(entry -> {
             System.out.println("SPLIT1: " + entry._1() + ": " + entry._2());

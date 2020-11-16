@@ -88,6 +88,22 @@
                 </bean>
                 <bean class="org.apache.ignite.configuration.CacheConfiguration">
                     <!-- Set a cache name. -->
+                    <property name="name" value="aggpathsRDD"/>
+                    <!-- Set a cache mode. -->
+                    <property name="cacheMode" value="PARTITIONED"/>
+                    <property name="indexedTypes">
+                        <list>
+                            <value>java.lang.String</value>
+                            <value>java.lang.Integer</value>
+                        </list>
+                    </property>
+                    <!-- Set atomicity mode. -->
+                    <property name="atomicityMode" value="ATOMIC"/>
+                    <!-- Configure a number of backups. -->
+                    <property name="backups" value="1"/>
+                </bean>
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <!-- Set a cache name. -->
                     <property name="name" value="splits1RDD"/>
                     <!-- Set a cache mode. -->
                     <property name="cacheMode" value="PARTITIONED"/>

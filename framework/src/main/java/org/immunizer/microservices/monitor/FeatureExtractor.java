@@ -121,20 +121,20 @@ public class FeatureExtractor {
 			for (int i = 0; i < numberOfParams; i++) {
 				JsonElement pi = parameters.getAsJsonArray().get(i);
 				if (!pi.isJsonPrimitive()) {
-					record.put("p" + i + "_length_variation",
+					record.put("p_" + i + "_length_variation",
 							getVariation("" + callStackId + "_p_" + i + "_length", (double) lengths[i]));
-					record.put("p" + i + "_path_min_f", pathToNodeMinFreqs[i]);
-					record.put("p" + i + "_min_if1", getSmoothedMinIF1("" + callStackId + "_p_" + i, minIF1s[i]));
-					record.put("p" + i + "_min_if3", getSmoothedMinIF3("" + callStackId + "_p_" + i, minIF3s[i]));
-					record.put("p" + i + "_max_string_length_variation", maxStringLengthVariations[i]);
-					record.put("p" + i + "_max_number_variation", maxNumberVariations[i]);
+					record.put("p_" + i + "_path_min_f", pathToNodeMinFreqs[i]);
+					record.put("p_" + i + "_min_if1", getSmoothedMinIF1("" + callStackId + "_p_" + i, minIF1s[i]));
+					record.put("p_" + i + "_min_if3", getSmoothedMinIF3("" + callStackId + "_p_" + i, minIF3s[i]));
+					record.put("p_" + i + "_max_string_length_variation", maxStringLengthVariations[i]);
+					record.put("p_" + i + "_max_number_variation", maxNumberVariations[i]);
 				} else if (pi.getAsJsonPrimitive().isString()) {
-					record.put("p" + i + "_min_if1", getSmoothedMinIF1("" + callStackId + "_p_" + i, minIF1s[i]));
-					record.put("p" + i + "_min_if3", getSmoothedMinIF3("" + callStackId + "_p_" + i, minIF3s[i]));
-					record.put("p" + i + "_length_variation",
+					record.put("p_" + i + "_min_if1", getSmoothedMinIF1("" + callStackId + "_p_" + i, minIF1s[i]));
+					record.put("p_" + i + "_min_if3", getSmoothedMinIF3("" + callStackId + "_p_" + i, minIF3s[i]));
+					record.put("p_" + i + "_length_variation",
 							getVariation("" + callStackId + "_p_" + i + "_length", (double) lengths[i]));
 				} else if (pi.getAsJsonPrimitive().isNumber())
-					record.put("p" + i + "_number_variation", maxNumberVariations[i]);
+					record.put("p_" + i + "_number_variation", maxNumberVariations[i]);
 			}
 			if (invocation.get("_returnsString").getAsBoolean()) {
 				record.put("r_min_if1", getSmoothedMinIF1("" + callStackId + "_r", minIF1s[numberOfParams]));

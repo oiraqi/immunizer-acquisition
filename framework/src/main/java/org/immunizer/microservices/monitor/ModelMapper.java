@@ -2,7 +2,6 @@ package org.immunizer.microservices.monitor;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Vector;
 import java.util.Map.Entry;
 
 import com.google.gson.JsonArray;
@@ -35,7 +34,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		int callStackId = invocation.get("callStackId").getAsInt();
 		JsonElement parameters = invocation.get("params"), result = null;
 		int numberOfParams = parameters.getAsJsonArray().size();
-		Vector<String> model = new Vector<String>();
+		HashMap<String, String> model = new HashMap<String, String>();
 		int[] lengths;
 
 		if (numberOfParams > 0 && invocation.get("_returns").getAsBoolean()) {
@@ -59,7 +58,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			return null;
 		}
 
-		return model.iterator();
+		return model.keySet().iterator();
 	}
 
 	/**
@@ -73,9 +72,10 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	 * @param paramIndex
 	 * @param isParentAnArray
 	 * @param numberOfParams
+	 * @param model
 	 */
 	private void build(int callStackId, String pathToNode, String aggregatedPathToNode, JsonElement jsonElement,
-			int paramIndex, boolean isParentAnArray, int numberOfParams, Vector<String> model) {
+			int paramIndex, boolean isParentAnArray, int numberOfParams, HashMap<String, String> model) {
 
 		if (jsonElement.isJsonNull())
 			return;
@@ -114,33 +114,40 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			}
 		} else {
 			JsonPrimitive primitive = jsonElement.getAsJsonPrimitive();
-			model.add("paths_" + callStackId + "_" + pathToNode);
+			model.put("paths_" + callStackId + "_" + pathToNode, "");
 
 			if (primitive.isString()) {
 				String value = primitive.getAsString();
 				getSplits(value, 1, callStackId, aggregatedPathToNode, model);
 				getSplits(value, 3, callStackId, aggregatedPathToNode, model);
+				String key = "aggpaths_" + callStackId + "_" + aggregatedPathToNode;
+				if (!model.containsKey(key))
+					model.put(key, "");
 			} else if (primitive.isNumber()) {
 				double value = primitive.getAsNumber().doubleValue();
-				model.add("numbers_" + callStackId + '_' + aggregatedPathToNode + '_' + value);
+				model.put("numbers_" + callStackId + '_' + aggregatedPathToNode + '_' + value, "");
+				String key = "aggpaths_" + callStackId + "_" + aggregatedPathToNode;
+				if (!model.containsKey(key))
+					model.put(key, "");
 			}
 		}
 	}
 
-	private void getSplits(String input, int n, int callStackId, String aggregatedPathToNode, Vector<String> model) {
-		HashMap<String, String> splitsSeen = new HashMap<String, String>();
+	private void getSplits(String input, int n, int callStackId, String aggregatedPathToNode, HashMap<String, String> model) {
+		// HashMap<String, String> splitsSeen = new HashMap<String, String>();
 		Splitter splitter = Splitter.fixedLength(n);
 
 		for (int i = 0; i < n && i < input.length(); i++) {
 			Iterable<String> splits = splitter.split(input.substring(i));
 
 			for (String split : splits) {
-				if (splitsSeen.containsKey(split))
-					continue;
+				/*if (splitsSeen.containsKey(split))
+					continue;*/
+				String key = "splits_" + n + "_" + callStackId + "_" + aggregatedPathToNode + "_" + split;
+				if (!model.containsKey(key))
+					model.put(key, "");
 
-				model.add("splits_" + n + "_" + callStackId + "_" + aggregatedPathToNode + "_" + split);
-
-				splitsSeen.put(split, "");
+				// splitsSeen.put(split, "");
 			}
 		}
 	}
