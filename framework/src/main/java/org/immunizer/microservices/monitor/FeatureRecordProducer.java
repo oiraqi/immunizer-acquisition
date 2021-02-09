@@ -5,7 +5,11 @@ import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
-public class FeatureRecordProducer {
+import java.io.Serializable;
+
+public class FeatureRecordProducer implements Serializable {
+
+    private static final long serialVersionUID = 1876876L;
 
     private KafkaProducer<String, FeatureRecord> producer;
     private static final String BOOTSTRAP_SERVERS = "localhost:29092";

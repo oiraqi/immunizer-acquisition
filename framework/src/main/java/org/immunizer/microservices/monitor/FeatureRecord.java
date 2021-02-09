@@ -3,7 +3,11 @@ package org.immunizer.microservices.monitor;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class FeatureRecord {
+import java.io.Serializable;
+
+public class FeatureRecord implements Serializable {
+
+    private static final long serialVersionUID = 1354353L;
     private int callStackId;
     // private StackTraceElement[] callStack;
     private String threadTag;
