@@ -89,7 +89,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	}
 
 	/**
-	 * Create and Send the Feature Record through the Message Broker, currently Kafka
+	 * Creates and Sends the Feature Record through the Message Broker, currently Kafka
 	 */
 	private void createAndSendFeatureRecord() {
 		FeatureRecord fr = new FeatureRecord(callStackId, invocation.get("threadTag").getAsString(),
