@@ -17,7 +17,7 @@ public class MonitorApplication {
         try {
             while (true) {
                 Vector<byte[]> records = consumer.poll(Duration.ofSeconds(60));
-                JavaRDD<String> model = sc.parallelize(records).flatMap(new ModelMapper()).filter(record -> record != null);                
+                JavaRDD<String> model = sc.parallelize(records).flatMap(new ModelMapper()).filter(record -> record != null);
                 cache.saveModel(model);
             }
         } finally {

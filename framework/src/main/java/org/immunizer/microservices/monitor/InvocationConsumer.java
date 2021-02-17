@@ -29,7 +29,7 @@ public class InvocationConsumer {
         props.setProperty("auto.commit.interval.ms", "1000");
         // props.put("session.timeout.ms", "30000");
         props.setProperty("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        props.setProperty("value.deserializer", "org.immunizer.microservices.monitor.InvocationDeserializer");
+        props.setProperty("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
 
         consumer = new KafkaConsumer<String, byte[]>(props);
         consumer.subscribe(Pattern.compile(TOPIC_PATTERN));
@@ -41,7 +41,7 @@ public class InvocationConsumer {
          * Make sure to poll at least SIZE records. Otherwise poll all records
          * from beginning offsets.
          */
-        Map<TopicPartition, Long> beginningOffsets = consumer.beginningOffsets(consumer.assignment());
+        /*Map<TopicPartition, Long> beginningOffsets = consumer.beginningOffsets(consumer.assignment());
         consumer.endOffsets(consumer.assignment()).forEach((partition, endOffset) -> {
             System.out.println(partition.topic() + " : " + endOffset);
             if (endOffset - consumer.position(partition) < SIZE) {
@@ -51,7 +51,7 @@ public class InvocationConsumer {
                     consumer.seek(partition, beginningOffsets.get(partition));
                 }
             }
-        });
+        });*/
 
         /**
          * Append a timestamp to each record as an id, since each record may

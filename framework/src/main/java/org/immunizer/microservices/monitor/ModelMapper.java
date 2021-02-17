@@ -83,8 +83,8 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		aggPathsCache = ignite.cache("aggPaths");
 		splits1Cache = ignite.cache("splits1");
 		splits3Cache = ignite.cache("splits3");
-		splits1MinFrequenciesCache = ignite.cache("splits1MinFrequencies");
-		splits3MinFrequenciesCache = ignite.cache("splits3MinFrequencies");
+		splits1MinFrequenciesCache = ignite.cache("splits1MinFreqSum");
+		splits3MinFrequenciesCache = ignite.cache("splits3MinFreqSum");
 		
 		int callStackId = invocation.get("callStackId").getAsInt();
 		model.put("callstacks_" + callStackId, "");
@@ -114,15 +114,16 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			buildRecordFromParam(pi, i);
 			
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_p" + i);
+			model.put("splits1MinFreqSum_" + callStackId + "_p" + i + "_" + (double)min1Occurences[i] / min1AggregatedPathToNode[i], "");
 			/* Frequency smoothing */
 			if (min1Occurences[i] > splits1MinFrequenciesSum)	/* No need to divide both sides by callStackOccurences */
 				min1Occurences[i] = splits1MinFrequenciesSum;
-			splits1MinFrequenciesCache.put("" + callStackId + "_p" + i, splits1MinFrequenciesSum + (double)min1Occurences[i] / min1AggregatedPathToNode[i]);
 
 			splits3MinFrequenciesSum = splits3MinFrequenciesCache.get("" + callStackId + "_p" + i);
+			model.put("splits3MinFreqSum_" + callStackId + "_p" + i + "_" + (double)min3Occurences[i] / min3AggregatedPathToNode[i], "");
+			/* Frequency smoothing */
 			if (min3Occurences[i] > splits3MinFrequenciesSum)
-				min3Occurences[i] = splits3MinFrequenciesSum;
-			splits3MinFrequenciesCache.put("" + callStackId + "_p" + i, splits3MinFrequenciesSum + (double)min3Occurences[i] / min3AggregatedPathToNode[i]);
+				min3Occurences[i] = splits3MinFrequenciesSum;			
 		}
 
 		if (invocation.get("_returns").getAsBoolean()) {
@@ -138,12 +139,17 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			buildRecordFromResult();
 
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_r");
-			splits1MinFrequenciesCache.put("" + callStackId + "_r", splits1MinFrequenciesSum + (double)min1Occurences[numberOfParams] / min1AggregatedPathToNode[numberOfParams]);
+			model.put("splits1MinFreqSum_" + callStackId + "_r_" + (double)min1Occurences[numberOfParams] / min1AggregatedPathToNode[numberOfParams], "");
+			/* Frequency smoothing */
+			if (min1Occurences[numberOfParams] > splits1MinFrequenciesSum)	/* No need to divide both sides by callStackOccurences */
+				min1Occurences[numberOfParams] = splits1MinFrequenciesSum;
+			
 			splits3MinFrequenciesSum = splits3MinFrequenciesCache.get("" + callStackId + "_r");
-			splits3MinFrequenciesCache.put("" + callStackId + "_r", splits3MinFrequenciesSum + (double)min3Occurences[numberOfParams] / min3AggregatedPathToNode[numberOfParams]);
+			model.put("splits3MinFreqSum_" + callStackId + "_r_" + (double)min3Occurences[numberOfParams] / min3AggregatedPathToNode[numberOfParams], "");
+			/* Frequency smoothing */
+			if (min3Occurences[numberOfParams] > splits3MinFrequenciesSum)
+				min3Occurences[numberOfParams] = splits3MinFrequenciesSum;
 		}
-
-		callStacksCache.put("" + callStackId, callStackOccurences + 1);
 		
 		FeatureRecord fr = new FeatureRecord(callStackId, invocation.get("threadTag").getAsString(),
 				invocation.get("fullyQualifiedMethodName").getAsString(),
@@ -242,7 +248,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			Iterable<String> splits = splitter.split(input.substring(i));
 
 			for (String split : splits) {
-				String key = "splits_" + n + "_" + callStackId + "_" + aggregatedPathToNode + "_" + split;
+				String key = "splits" + n + "_" + callStackId + "_" + aggregatedPathToNode + "_" + split;
 				if (!model.containsKey(key))
 					model.put(key, "");
 

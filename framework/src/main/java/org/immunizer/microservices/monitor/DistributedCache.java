@@ -13,8 +13,11 @@ public class DistributedCache {
 
     private JavaIgniteContext<String, Double> igniteContext1;
     private JavaIgniteContext<String, Long> igniteContext2;
-    private JavaIgniteRDD<String, Double> numbersStdevsRDD, numbersMeansRDD, stringLengthsStdevsRDD, stringLengthsMeansRDD, wholeLengthsStdevsRDD, wholeLengthsMeansRDD;
-    private JavaIgniteRDD<String, Long> callStacksRDD, pathsRDD, aggPathsRDD, splits1RDD, splits3RDD;
+    private JavaIgniteRDD<String, Double> numbersStdevsRDD, numbersMeansRDD,
+        stringLengthsStdevsRDD, stringLengthsMeansRDD, wholeLengthsStdevsRDD,
+        wholeLengthsMeansRDD, splits1MinFreqSumRDD, splits3MinFreqSumRDD;
+    private JavaIgniteRDD<String, Long> callStacksRDD, pathsRDD, aggPathsRDD, splits1RDD,
+        splits3RDD;
 
     public DistributedCache(JavaSparkContext sc) {        
         igniteContext1 = new JavaIgniteContext<String, Double>(sc, "immunizer/ignite-cfg.xml");
@@ -34,6 +37,9 @@ public class DistributedCache {
         aggPathsRDD = igniteContext2.fromCache("aggPaths");
         splits1RDD = igniteContext2.fromCache("splits1");
         splits3RDD = igniteContext2.fromCache("splits3");
+        /* For frequency smoothing */
+        splits1MinFreqSumRDD = igniteContext2.fromCache("splits1MinFreqSum");
+        splits3MinFreqSumRDD = igniteContext2.fromCache("splits3MinFreqSum");        
     }
 
     public void saveModel(JavaRDD<String> model) {
@@ -83,17 +89,34 @@ public class DistributedCache {
         JavaPairRDD<String, InLongteger> aggPathsModel = model.filter(record -> record.startsWith("aggpaths_"))
                 .mapToPair(record -> new Tuple2<String, Long>(record.substring(9), 1)).reduceByKey((a, b) -> a + b);
 
-        JavaPairRDD<String, Long> splits1Model = model.filter(record -> record.startsWith("splits_1_"))
-                .mapToPair(record -> new Tuple2<String, Long>(record.substring(9), 1)).reduceByKey((a, b) -> a + b);
+        JavaPairRDD<String, Long> splits1Model = model.filter(record -> record.startsWith("splits1_"))
+                .mapToPair(record -> new Tuple2<String, Long>(record.substring(8), 1)).reduceByKey((a, b) -> a + b);
 
-        JavaPairRDD<String, Long> splits3Model = model.filter(record -> record.startsWith("splits_3_"))
-                .mapToPair(record -> new Tuple2<String, Long>(record.substring(9), 1)).reduceByKey((a, b) -> a + b);
+        JavaPairRDD<String, Long> splits3Model = model.filter(record -> record.startsWith("splits3_"))
+                .mapToPair(record -> new Tuple2<String, Long>(record.substring(8), 1)).reduceByKey((a, b) -> a + b);
+
+        JavaPairRDD<String, Double> splits1MinFreqSumModel = model.filter(record -> record.startsWith("splits1MinFreqSum_"))
+                .mapToPair(record -> {
+                    String key = record.substring(18, record.lastIndexOf('_'));
+                    Double value = Double.valueOf(record.substring(record.lastIndexOf('_') + 1));
+                    new Tuple2<String, Double>(key, value);
+                }).reduceByKey((a, b) -> a + b);
+
+        JavaPairRDD<String, Double> splits3Model = model.filter(record -> record.startsWith("splits3MinFreqSum_"))
+                .mapToPair(record -> {
+                    String key = record.substring(18, record.lastIndexOf('_'));
+                    Double value = Double.valueOf(record.substring(record.lastIndexOf('_') + 1));
+                    new Tuple2<String, Double>(key, value);
+                }).reduceByKey((a, b) -> a + b);
 
         updateCountRDD(callStacksModel, callStacksRDD);
         updateCountRDD(pathsModel, pathsRDD);
         updateCountRDD(aggPathsModel, aggPathsRDD);
         updateCountRDD(splits1Model, splits1RDD);
         updateCountRDD(splits3Model, splits3RDD);
+
+        updateSumRDD(splits1MinFreqSumModel, splits1MinFreqSumRDD);
+        updateSumRDD(splits3MinFreqSumModel, splits3MinFreqSumRDD);
 
         updateMeanStdevCountRDD(numbersMeansModel, numbersStdevsModel, numbersCountsModel,
             numbersMeansRDD, numbersStdevsRDD, numbersCountsRDD);
@@ -132,6 +155,18 @@ public class DistributedCache {
                 value += frdd.first()._2().longValue();
             }
             return new Tuple2<String, Long>(record._1(), value);
+        });
+        rdd.savePairs(mappedModel);
+    }
+
+    private void updateSumRDD(JavaPairRDD<String, Double> model, JavaIgniteRDD<String, Double> rdd) {
+        JavaPairRDD<String, Double> mappedModel = model.mapToPair(record -> {
+            JavaIgniteRDD<String, Double> frdd = rdd.filter(rec -> rec._1().equals(record._1()));
+            double value = record._2().doubleValue();
+            if (frdd.count() > 0) {
+                value += frdd.first()._2().doubleValue();
+            }
+            return new Tuple2<String, Double>(record._1(), value);
         });
         rdd.savePairs(mappedModel);
     }
