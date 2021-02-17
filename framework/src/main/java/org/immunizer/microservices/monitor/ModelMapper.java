@@ -26,9 +26,6 @@ import java.util.HashMap;
 
 public class ModelMapper implements FlatMapFunction<byte[], String> {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 	private Ignite ignite;
 	private IgniteCache numbersStdevsCache, numbersMeansCache, stringLengthsStdevsCache, 
@@ -39,27 +36,14 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	private String[] min1AggregatedPathToNode, min3AggregatedPathToNode;
 	private double[] maxNumberVariations, maxStringLengthVariations, wholeLengthVariations;
 	private JsonObject invocation;
-	private int numberOfParams;
+	private int callStackId, numberOfParams;
 	HashMap<String, String> model = new HashMap<String, String>();
 	HashMap<String, Double> record = new HashMap<String, Double>();
 
 	/**
-	 * Extracts features from invocation Uses build method to build features
-	 * recursively for each parameter tree or returned value tree
-	 * 
-	 * @param invocation
-	 * @return The Feature Record
+	 * Initilaizes Ignite Caches
 	 */
-	public Iterator<String> call(byte[] invocationBytes) {
-		JsonParser parser = new JsonParser();
-		invocation = parser.parse(new String(invocationBytes)).getAsJsonObject();
-		JsonArray parameters = invocation.get("params").getAsJsonArray();
-		JsonElement result = null;
-		numberOfParams = parameters.size();
-
-		if (numberOfParams == 0)
-			return null;
-
+	private void initCaches() {
 		TcpDiscoveryVmIpFinder ipFinder = new TcpDiscoveryVmIpFinder();
 		ipFinder.setAddresses(Collections.singletonList("ignite:47500..47509"));
 		
@@ -85,22 +69,59 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		splits3Cache = ignite.cache("splits3");
 		splits1MinFrequenciesCache = ignite.cache("splits1MinFreqSum");
 		splits3MinFrequenciesCache = ignite.cache("splits3MinFreqSum");
-		
-		int callStackId = invocation.get("callStackId").getAsInt();
-		model.put("callstacks_" + callStackId, "");
-		int length;
-		double splits1MinFrequenciesSum, splits3MinFrequenciesSum;
+	}
 
+	/**
+	 * Initializes the model
+	 */
+	private void initModel() {
+		callStackId = invocation.get("callStackId").getAsInt();
+		model.put("callstacks_" + callStackId, "");
 		callStackOccurences = callStacksCache.get("" + callStackId);
 		minPathOccurences = new long[numberOfParams + 1];
 		min1Occurences = new long[numberOfParams + 1];
 		min3Occurences = new long[numberOfParams + 1];
 		min1AggregatedPathToNode = new String[numberOfParams + 1];
 		min3AggregatedPathToNode = new String[numberOfParams + 1];
-		double wholeLengthMean, wholeLengthStdev;
 		wholeLengthVariations = new double[numberOfParams + 1];
 		maxNumberVariations = new double[numberOfParams + 1];
 		maxStringLengthVariations = new double[numberOfParams + 1];
+	}
+
+	/**
+	 * Create and Send the Feature Record through the Message Broker, currently Kafka
+	 */
+	private void createAndSendFeatureRecord() {
+		FeatureRecord fr = new FeatureRecord(callStackId, invocation.get("threadTag").getAsString(),
+				invocation.get("fullyQualifiedMethodName").getAsString(),
+				invocation.get("version").getAsString(), record);
+		FeatureRecordProducer frp = new FeatureRecordProducer();
+		frp.send(fr)
+	}
+
+	/**
+	 * Extracts features from invocation Uses build method to build features
+	 * recursively for each parameter tree or returned value tree
+	 * 
+	 * @param invocation
+	 * @return The Feature Record
+	 */
+	public Iterator<String> call(byte[] invocationBytes) {
+		JsonParser parser = new JsonParser();
+		invocation = parser.parse(new String(invocationBytes)).getAsJsonObject();
+		JsonArray parameters = invocation.get("params").getAsJsonArray();
+		JsonElement result = null;
+		numberOfParams = parameters.size();
+
+		if (numberOfParams == 0)
+			return null;
+		
+		int length;
+		double splits1MinFrequenciesSum, splits3MinFrequenciesSum, wholeLengthMean,
+			wholeLengthStdev;
+			
+		initCaches();
+		initModel();
 		
 		for (int i = 0; i < numberOfParams; i++) {
 			length = parameters.get(i).toString().length();
@@ -110,7 +131,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			wholeLengthVariations[i] = Math.abs(length - wholeLengthMean) / wholeLengthStdev;
 			minPathOccurences[i] = min1Occurences[i] = min3Occurences[i] = callStackOccurences;
 			maxNumberVariations[i] = maxStringLengthVariations[i] = 0.5;
-			build(callStackId, "p" + i, "p" + i, parameters.get(i), i);
+			build("p" + i, "p" + i, parameters.get(i), i);
 			buildRecordFromParam(pi, i);
 			
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_p" + i);
@@ -135,7 +156,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			wholeLengthVariations[numberOfParams] = Math.abs(length - wholeLengthMean) / wholeLengthStdev;
 			minPathOccurences[numberOfParams] = min3Occurences[numberOfParams] = min1Occurences[numberOfParams] = callStackOccurences;
 			maxNumberVariations[numberOfParams] = maxStringLengthVariations[numberOfParams] = 0.5;
-			build(callStackId, "r", "r", result, numberOfParams);
+			build("r", "r", result, numberOfParams);
 			buildRecordFromResult();
 
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_r");
@@ -151,11 +172,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 				min3Occurences[numberOfParams] = splits3MinFrequenciesSum;
 		}
 		
-		FeatureRecord fr = new FeatureRecord(callStackId, invocation.get("threadTag").getAsString(),
-				invocation.get("fullyQualifiedMethodName").getAsString(),
-				invocation.get("version").getAsString(), record);
-		FeatureRecordProducer frp = new FeatureRecordProducer();
-		frp.send(fr);
+		createAndSendFeatureRecord();
 
 		return model.keySet().iterator();
 	}
@@ -170,7 +187,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	 * @param jsonElement
 	 * @param model
 	 */
-	private void build(int callStackId, String pathToNode, String aggregatedPathToNode,
+	private void build(String pathToNode, String aggregatedPathToNode,
 			JsonElement jsonElement, int paramIndex) {
 
 		if (jsonElement.isJsonNull())
@@ -185,7 +202,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 				 * aggregatedPathToNode for all of them (third parameter) to group and compare
 				 * siblings and relatives
 				 */
-				build(callStackId, pathToNode + '_' + i, aggregatedPathToNode, jsonArray.get(i),
+				build(pathToNode + '_' + i, aggregatedPathToNode, jsonArray.get(i),
 						paramIndex);
 		} else if (jsonElement.isJsonObject()) {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
@@ -193,7 +210,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			Iterator<Entry<String, JsonElement>> entries = jsonObject.entrySet().iterator();
 			while (entries.hasNext()) {
 				String key = (String) entries.next().getKey();
-				build(callStackId, pathToNode.isEmpty() ? key : pathToNode + '_' + key,
+				build(pathToNode.isEmpty() ? key : pathToNode + '_' + key,
 						aggregatedPathToNode.isEmpty() ? key : aggregatedPathToNode + '_' + key,
 						jsonObject.get(key), paramIndex);
 			}
