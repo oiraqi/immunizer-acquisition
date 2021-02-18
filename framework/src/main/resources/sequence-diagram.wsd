@@ -1,0 +1,19 @@
+@startuml SequenceDiagram
+participant "Spark Master" as Master
+collections "Spark Workers" as Workers
+database "Distributed Cache" as Cache
+queue "Streaming Broker" as Broker
+Master -> Broker : poll batch of invocations
+Broker --> Master : return batch of invocations
+Master -> Master : Parallelize invocations
+Master -> Workers : submit invocations
+Workers -> Cache : multiple access
+Cache --> Workers : return
+Workers -> Broker : send feature records
+Workers --> Master : return invocations meta data
+Master -> Workers : build batch model out of\ninvocations meta data
+Workers --> Master : return batch model
+Master -> Workers : update application model\nwith batch model
+Workers -> Cache : update application model
+Master -> Broker : poll another batch of invocations
+@enduml
