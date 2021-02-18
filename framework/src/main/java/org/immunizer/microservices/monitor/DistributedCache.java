@@ -42,7 +42,7 @@ public class DistributedCache {
         splits3MinFreqSumRDD = igniteContext1.fromCache("splits3MinFreqSum");        
     }
 
-    public void saveModel(JavaRDD<String> model) {
+    public void updateModel(JavaRDD<String> model) {
         JavaPairRDD<String, StatCounter> numbersModel = model.filter(record -> record.startsWith("numbers_"))
                 .mapToPair(record -> {
                     String key = record.substring(8, record.lastIndexOf('_'));
