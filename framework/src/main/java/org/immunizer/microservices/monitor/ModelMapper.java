@@ -110,7 +110,6 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		JsonParser parser = new JsonParser();
 		invocation = parser.parse(new String(invocationBytes)).getAsJsonObject();
 		JsonArray parameters = invocation.get("params").getAsJsonArray();
-		JsonElement result = null;
 		numberOfParams = parameters.size();
 
 		if (numberOfParams == 0)
@@ -124,14 +123,15 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		initModel();
 		
 		for (int i = 0; i < numberOfParams; i++) {
-			length = parameters.get(i).toString().length();
+			JsonElement pi = parameters.get(i);
+			length = pi.toString().length();
 			model.put("whllens_" + callStackId + "_p" + i + "_" + length, "");
 			wholeLengthMean = wholeLengthsMeansCache.get(callStackId + "_p" + i);
 			wholeLengthStdev = wholeLengthsStdevsCache.get(callStackId + "_p" + i);
 			wholeLengthVariations[i] = Math.abs(length - wholeLengthMean) / wholeLengthStdev;
 			minPathOccurences[i] = min1Occurences[i] = min3Occurences[i] = callStackOccurences;
 			maxNumberVariations[i] = maxStringLengthVariations[i] = 0.5;
-			build("p" + i, "p" + i, parameters.get(i), i);
+			build("p" + i, "p" + i, pi, i);
 			buildRecordFromParam(pi, i);
 			
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_p" + i);
@@ -148,7 +148,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		}
 
 		if (invocation.get("_returns").getAsBoolean()) {
-			result = invocation.get("result");
+			JsonElement result = invocation.get("result");
 			length = result.toString().length();
 			model.put("whllens_" + callStackId + "_r_" + length, "");
 			wholeLengthMean = wholeLengthsMeansCache.get(callStackId + "_r");
@@ -157,7 +157,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			minPathOccurences[numberOfParams] = min3Occurences[numberOfParams] = min1Occurences[numberOfParams] = callStackOccurences;
 			maxNumberVariations[numberOfParams] = maxStringLengthVariations[numberOfParams] = 0.5;
 			build("r", "r", result, numberOfParams);
-			buildRecordFromResult();
+			buildRecordFromResult(result);
 
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_r");
 			model.put("splits1MinFreqSum_" + callStackId + "_r_" + (double)min1Occurences[numberOfParams] / min1AggregatedPathToNode[numberOfParams], "");
@@ -299,7 +299,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		}
 	}
 
-	private void buildRecordFromResult() {
+	private void buildRecordFromResult(JsonElement result) {
 		if (invocation.get("_returnsString").getAsBoolean()) {
 			record.put("r_min_if1", (double) min1Occurences[numberOfParams] / min1AggregatedPathToNode[numberOfParams]);
 			record.put("r_min_if3", (double) min3Occurences[numberOfParams] / min3AggregatedPathToNode[numberOfParams]);
