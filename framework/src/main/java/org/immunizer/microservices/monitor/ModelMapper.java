@@ -28,9 +28,9 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 
 	private static final long serialVersionUID = 1L;
 	private Ignite ignite;
-	private IgniteCache numbersStdevsCache, numbersMeansCache, stringLengthsStdevsCache, 
-		stringLengthsMeansCache, wholeLengthsStdevsCache, wholeLengthsMeansCache, 
-			callStacksCache, pathsCache, aggPathsCache, splits1Cache, splits3Cache;
+	private IgniteCache<String, Double> numbersStdevsCache, numbersMeansCache, stringLengthsStdevsCache, 
+		stringLengthsMeansCache, wholeLengthsStdevsCache, wholeLengthsMeansCache, splits1MinFrequenciesCache, splits3MinFrequenciesCache;
+	private IgniteCache<String, Long> callStacksCache, pathsCache, aggPathsCache, splits1Cache, splits3Cache;
 	private long callStackOccurences;
 	private long[] minPathOccurences, min1Occurences, min3Occurences;
 	private String[] min1AggregatedPathToNode, min3AggregatedPathToNode;
@@ -96,7 +96,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 				invocation.get("fullyQualifiedMethodName").getAsString(),
 				invocation.get("version").getAsString(), record);
 		FeatureRecordProducer frp = new FeatureRecordProducer();
-		frp.send(fr)
+		frp.send(fr);
 	}
 
 	/**
@@ -135,16 +135,16 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			buildRecordFromParam(pi, i);
 			
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_p" + i);
-			model.put("splits1MinFreqSum_" + callStackId + "_p" + i + "_" + (double)min1Occurences[i] / min1AggregatedPathToNode[i], "");
+			model.put("splits1MinFreqSum_" + callStackId + "_p" + i + "_" + (double)min1Occurences[i] / aggPathsCache.get(callStackId + "_" + min1AggregatedPathToNode[i]), "");
 			/* Frequency smoothing */
 			if (min1Occurences[i] > splits1MinFrequenciesSum)	/* No need to divide both sides by callStackOccurences */
-				min1Occurences[i] = splits1MinFrequenciesSum;
+				min1Occurences[i] = (long)splits1MinFrequenciesSum;
 
 			splits3MinFrequenciesSum = splits3MinFrequenciesCache.get("" + callStackId + "_p" + i);
-			model.put("splits3MinFreqSum_" + callStackId + "_p" + i + "_" + (double)min3Occurences[i] / min3AggregatedPathToNode[i], "");
+			model.put("splits3MinFreqSum_" + callStackId + "_p" + i + "_" + (double)min3Occurences[i] / aggPathsCache.get(callStackId + "_" + min3AggregatedPathToNode[i]), "");
 			/* Frequency smoothing */
 			if (min3Occurences[i] > splits3MinFrequenciesSum)
-				min3Occurences[i] = splits3MinFrequenciesSum;			
+				min3Occurences[i] = (long)splits3MinFrequenciesSum;			
 		}
 
 		if (invocation.get("_returns").getAsBoolean()) {
@@ -160,16 +160,16 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 			buildRecordFromResult(result);
 
 			splits1MinFrequenciesSum = splits1MinFrequenciesCache.get("" + callStackId + "_r");
-			model.put("splits1MinFreqSum_" + callStackId + "_r_" + (double)min1Occurences[numberOfParams] / min1AggregatedPathToNode[numberOfParams], "");
+			model.put("splits1MinFreqSum_" + callStackId + "_r_" + (double)min1Occurences[numberOfParams] / aggPathsCache.get(callStackId + "_" + min1AggregatedPathToNode[numberOfParams]), "");
 			/* Frequency smoothing */
 			if (min1Occurences[numberOfParams] > splits1MinFrequenciesSum)	/* No need to divide both sides by callStackOccurences */
-				min1Occurences[numberOfParams] = splits1MinFrequenciesSum;
+				min1Occurences[numberOfParams] = (long)splits1MinFrequenciesSum;
 			
 			splits3MinFrequenciesSum = splits3MinFrequenciesCache.get("" + callStackId + "_r");
-			model.put("splits3MinFreqSum_" + callStackId + "_r_" + (double)min3Occurences[numberOfParams] / min3AggregatedPathToNode[numberOfParams], "");
+			model.put("splits3MinFreqSum_" + callStackId + "_r_" + (double)min3Occurences[numberOfParams] / aggPathsCache.get(callStackId + "_" + min3AggregatedPathToNode[numberOfParams]), "");
 			/* Frequency smoothing */
 			if (min3Occurences[numberOfParams] > splits3MinFrequenciesSum)
-				min3Occurences[numberOfParams] = splits3MinFrequenciesSum;
+				min3Occurences[numberOfParams] = (long)splits3MinFrequenciesSum;
 		}
 		
 		createAndSendFeatureRecord();
@@ -230,7 +230,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 				model.put("strlens_" + callStackId + '_' + aggregatedPathToNode + '_' + value.length(), "");
 				double stringLengthsMean = stringLengthsMeansCache.get(callStackId + '_' + aggregatedPathToNode);
 				double stringLengthsStdev = stringLengthsStdevsCache.get(callStackId + '_' + aggregatedPathToNode);
-				double stringLengthVariation = Math.abs(value - stringLengthsMean) / stringLengthsStdev;
+				double stringLengthVariation = Math.abs(value.length() - stringLengthsMean) / stringLengthsStdev;
 				if (stringLengthVariation > 1 && stringLengthVariation > maxStringLengthVariations[paramIndex])
 					maxStringLengthVariations[paramIndex] = stringLengthVariation;
 				
@@ -269,11 +269,11 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 				if (!model.containsKey(key))
 					model.put(key, "");
 
-				long splitOccurences;
+				long splitOccurences = 0;
 				if (n == 1)
-					splitOccurences = splits1Cache.get(callStackId + "_" + aggregatedPathToNode + "_" + split)
+					splitOccurences = splits1Cache.get(callStackId + "_" + aggregatedPathToNode + "_" + split);
 				else if (n == 3)
-					splitOccurences = splits3Cache.get(callStackId + "_" + aggregatedPathToNode + "_" + split)
+					splitOccurences = splits3Cache.get(callStackId + "_" + aggregatedPathToNode + "_" + split);
 				
 				if ((minSplitOccurences >= 0 && splitOccurences < minSplitOccurences) || minSplitOccurences == -1)
 					minSplitOccurences = splitOccurences;
@@ -286,13 +286,13 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		if (!pi.isJsonPrimitive()) {
 			record.put("p" + i + "_length_variation", wholeLengthVariations[i]);
 			record.put("p" + i + "_path_min_f", (double) minPathOccurences[i] / callStackOccurences);
-			record.put("p" + i + "_min_if1", (double) min1Occurences[i] / min1AggregatedPathToNode[i]);
-			record.put("p" + i + "_min_if3", (double) min3Occurences[i] / min3AggregatedPathToNode[i]);
+			record.put("p" + i + "_min_if1", (double) min1Occurences[i] / aggPathsCache.get(callStackId + "_" + min1AggregatedPathToNode[i]));
+			record.put("p" + i + "_min_if3", (double) min3Occurences[i] / aggPathsCache.get(callStackId + "_" + min3AggregatedPathToNode[i]));
 			record.put("p" + i + "_max_string_length_variation", maxStringLengthVariations[i]);
 			record.put("p" + i + "_max_number_variation", maxNumberVariations[i]);
 		} else if (pi.getAsJsonPrimitive().isString()) {
-			record.put("p" + i + "_min_if1", (double) min1Occurences[i] / min1AggregatedPathToNode[i]);
-			record.put("p" + i + "_min_if3", (double) min3Occurences[i] / min3AggregatedPathToNode[i]);
+			record.put("p" + i + "_min_if1", (double) min1Occurences[i] / aggPathsCache.get(callStackId + "_" + min1AggregatedPathToNode[i]));
+			record.put("p" + i + "_min_if3", (double) min3Occurences[i] / aggPathsCache.get(callStackId + "_" + min3AggregatedPathToNode[i]));
 			record.put("p" + i + "_length_variation", (double) maxStringLengthVariations[i]);
 		} else if (pi.getAsJsonPrimitive().isNumber()) {
 			record.put("p" + i + "_number_variation", (double) maxNumberVariations[i]);
@@ -301,16 +301,16 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 
 	private void buildRecordFromResult(JsonElement result) {
 		if (invocation.get("_returnsString").getAsBoolean()) {
-			record.put("r_min_if1", (double) min1Occurences[numberOfParams] / min1AggregatedPathToNode[numberOfParams]);
-			record.put("r_min_if3", (double) min3Occurences[numberOfParams] / min3AggregatedPathToNode[numberOfParams]);
+			record.put("r_min_if1", (double) min1Occurences[numberOfParams] / aggPathsCache.get(callStackId + "_" + min1AggregatedPathToNode[numberOfParams]));
+			record.put("r_min_if3", (double) min3Occurences[numberOfParams] / aggPathsCache.get(callStackId + "_" + min3AggregatedPathToNode[numberOfParams]));
 			record.put("r_length_variation", maxStringLengthVariations[numberOfParams]);
 		} else if (result.isJsonPrimitive() && result.getAsJsonPrimitive().isNumber()) {
 			record.put("r_number_variation", maxNumberVariations[numberOfParams]);
 		} else {
 			record.put("r_length_variation", wholeLengthVariations[numberOfParams]);
 			record.put("r_path_min_f", (double) minPathOccurences[numberOfParams] / callStackOccurences);
-			record.put("r_min_if1", (double) min1Occurences[numberOfParams] / min1AggregatedPathToNode[numberOfParams]);
-			record.put("r_min_if3", (double) min3Occurences[numberOfParams] / min3AggregatedPathToNode[numberOfParams]);
+			record.put("r_min_if1", (double) min1Occurences[numberOfParams] / aggPathsCache.get(callStackId + "_" + min1AggregatedPathToNode[numberOfParams]));
+			record.put("r_min_if3", (double) min3Occurences[numberOfParams] / aggPathsCache.get(callStackId + "_" + min3AggregatedPathToNode[numberOfParams]));
 			record.put("r_max_string_length_variation", maxStringLengthVariations[numberOfParams]);
 			record.put("r_max_number_variation", maxNumberVariations[numberOfParams]);
 		}
