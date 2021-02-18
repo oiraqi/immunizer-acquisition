@@ -3,8 +3,8 @@ participant "Spark Master" as Master
 collections "Spark Workers" as Workers
 database "Distributed Cache" as Cache
 queue "Streaming Broker" as Broker
-Master -> Broker : poll batch of invocations
-Broker --> Master : return batch of invocations
+Master -> Broker : poll a batch of invocations
+Broker --> Master : return a batch of invocations
 Master -> Master : Parallelize invocations
 Master -> Workers : submit invocations
 Workers -> Cache : multiple accesses
