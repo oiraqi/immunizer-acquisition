@@ -7,8 +7,8 @@ Master -> Broker : poll batch of invocations
 Broker --> Master : return batch of invocations
 Master -> Master : Parallelize invocations
 Master -> Workers : submit invocations
-Workers -> Cache : multiple access
-Cache --> Workers : return
+Workers -> Cache : multiple accesses
+Cache --> Workers : multiple returns
 Workers -> Broker : send feature records
 Workers --> Master : return invocations meta data
 Master -> Workers : build batch model out of\ninvocations meta data
