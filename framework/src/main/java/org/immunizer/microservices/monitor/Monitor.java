@@ -6,7 +6,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.SparkConf;
 
-public class MonitorApplication {
+public class Monitor {
 
     public static void main(String[] args) {
         SparkConf conf = new SparkConf().setAppName("Monitor").setMaster("spark://spark-master:7077");
