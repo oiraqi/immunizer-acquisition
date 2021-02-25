@@ -8,12 +8,12 @@ import java.io.Serializable;
 public class FeatureRecord implements Serializable {
 
     private static final long serialVersionUID = 1354353L;
-    private int callStackId;
+    private String callStackId;
     // private StackTraceElement[] callStack;
     private String threadTag;
     /*private long startTime;
     private long endTime;*/
-    private String version;
+    private String swid;
     private String fullyQualifiedMethodName;
     private HashMap<String, Double> record;
     /*private String parameters;
@@ -22,21 +22,21 @@ public class FeatureRecord implements Serializable {
     protected FeatureRecord() {
     }
 
-    public FeatureRecord(int callStackId, /*StackTraceElement[] callStack, */String threadTag/*, long startTime, long endTime*/,
-            String fullyQualifiedMethodName, String version, HashMap<String, Double> record/*, String parameters, String result*/) {
+    public FeatureRecord(String callStackId, /*StackTraceElement[] callStack, */String threadTag/*, long startTime, long endTime*/,
+            String fullyQualifiedMethodName, String swid, HashMap<String, Double> record/*, String parameters, String result*/) {
         this.callStackId = callStackId;
         // this.callStack = callStack;
         this.threadTag = threadTag;
         /*this.startTime = startTime;
         this.endTime = endTime;*/
         this.fullyQualifiedMethodName = fullyQualifiedMethodName;
-        this.version = version;
+        this.swid = swid;
         this.record = record;
         /*this.parameters = parameters;
         this.result = result;*/
     }
 
-    public int getCallStackId() {
+    public String getCallStackId() {
         return callStackId;
     }
 
@@ -52,8 +52,8 @@ public class FeatureRecord implements Serializable {
         return fullyQualifiedMethodName;
     }
 
-    public String getVersion() {
-        return version;
+    public String getSwid() {
+        return swid;
     }
 
     public HashMap<String, Double> getRecord() {

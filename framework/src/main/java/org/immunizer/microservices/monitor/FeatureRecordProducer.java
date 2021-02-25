@@ -14,17 +14,19 @@ public class FeatureRecordProducer implements Serializable {
     private KafkaProducer<String, FeatureRecord> producer;
     private static final String BOOTSTRAP_SERVERS = "localhost:29092";
     private static final String TOPIC = "FeatureRecords";
+    private String topic;
 
-    public FeatureRecordProducer() {
+    public FeatureRecordProducer(String swid) {
         Properties props = new Properties();
         props.put("bootstrap.servers", BOOTSTRAP_SERVERS);
         props.put("acks", "all");
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.immunizer.microservices.monitor.FeatureRecordSerializer");
         producer = new KafkaProducer<String, FeatureRecord>(props);
+        topic = TOPIC + '/' + swid;
     }
 
     public void send(FeatureRecord featureRecord) {
-        producer.send(new ProducerRecord<String, FeatureRecord>(TOPIC, featureRecord.getCallStackId(), "", featureRecord));
+        producer.send(new ProducerRecord<String, FeatureRecord>(topic, featureRecord.getCallStackId(), featureRecord));
     }
 }

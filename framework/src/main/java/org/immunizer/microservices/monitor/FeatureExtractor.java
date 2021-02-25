@@ -65,7 +65,7 @@ public class FeatureExtractor {
 
 		boolean exception = invocation.get("exception").getAsBoolean();
 		// long executionTime = invocation.getExecutionTime();
-		int callStackId = invocation.get("callStackId").getAsInt();
+		String callStackId = invocation.get("callStackId").getAsString();
 		int numberOfParams = invocation.get("numberOfParams").getAsInt();
 		JsonElement parameters = null, result = null;
 		synchronized (callStackOccurences) {
@@ -258,7 +258,7 @@ public class FeatureExtractor {
 		record.put("exception", exception ? (double) 1 : 0);
 		return new FeatureRecord(callStackId, /*invocation.getCallStack(), */invocation.get("threadTag").getAsString(),
 				/*invocation.getStartTime(), invocation.getEndTime(),*/ invocation.get("fullyQualifiedMethodName").getAsString(),
-				invocation.get("version").getAsString(), record/*,
+				invocation.get("swid").getAsString(), record/*,
 				(parameters != null) ? parameters.toString().replace('"', '_').replace('\'', '_').replace(' ', '_')
 						: null,
 				(result != null) ? result.toString().replace('"', '_').replace('\'', '_').replace(' ', '_') : null*/);
@@ -305,7 +305,7 @@ public class FeatureExtractor {
 	 * @param maxNumberVariations
 	 * @param maxStringLengthVariations
 	 */
-	private void build(int callStackId, String pathToNode, String aggregatedPathToNode, JsonElement jsonElement,
+	private void build(String callStackId, String pathToNode, String aggregatedPathToNode, JsonElement jsonElement,
 			int paramIndex, boolean isParentAnArray, int numberOfParams, double[] minIF1s, double[] minIF3s,
 			double[] pathToNodeMinFreqs, double[] maxNumberVariations, double[] maxStringLengthVariations) {
 		String cxAggregatedPathToNode = "" + callStackId + "_" + aggregatedPathToNode;

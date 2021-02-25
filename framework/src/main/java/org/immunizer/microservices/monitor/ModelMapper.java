@@ -36,7 +36,8 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	private String[] min1AggregatedPathToNode, min3AggregatedPathToNode;
 	private double[] maxNumberVariations, maxStringLengthVariations, wholeLengthVariations;
 	private JsonObject invocation;
-	private int callStackId, numberOfParams;
+	private int numberOfParams;
+	private String callStackId;
 	HashMap<String, String> model = new HashMap<String, String>();
 	HashMap<String, Double> record = new HashMap<String, Double>();
 
@@ -75,9 +76,9 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	 * Initializes the model
 	 */
 	private void initModel() {
-		callStackId = invocation.get("callStackId").getAsInt();
+		callStackId = invocation.get("callStackId").getAsString();
 		model.put("callstacks_" + callStackId, "");
-		callStackOccurences = callStacksCache.get("" + callStackId);
+		callStackOccurences = callStacksCache.get(callStackId);
 		minPathOccurences = new long[numberOfParams + 1];
 		min1Occurences = new long[numberOfParams + 1];
 		min3Occurences = new long[numberOfParams + 1];
@@ -94,8 +95,8 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 	private void createAndSendFeatureRecord() {
 		FeatureRecord fr = new FeatureRecord(callStackId, invocation.get("threadTag").getAsString(),
 				invocation.get("fullyQualifiedMethodName").getAsString(),
-				invocation.get("version").getAsString(), record);
-		FeatureRecordProducer frp = new FeatureRecordProducer();
+				invocation.get("swid").getAsString(), record);
+		FeatureRecordProducer frp = new FeatureRecordProducer(invocation.get("swid").getAsString());
 		frp.send(fr);
 	}
 
@@ -257,7 +258,7 @@ public class ModelMapper implements FlatMapFunction<byte[], String> {
 		}
 	}
 
-	private long getSplits(String input, int n, int callStackId, String aggregatedPathToNode) {
+	private long getSplits(String input, int n, String callStackId, String aggregatedPathToNode) {
 		Splitter splitter = Splitter.fixedLength(n);
 		long minSplitOccurences = -1;
 
