@@ -13,7 +13,7 @@ public class FeatureRecordProducer implements Serializable {
 
     private KafkaProducer<String, FeatureRecord> producer;
     private static final String BOOTSTRAP_SERVERS = "localhost:29092";
-    private static final String TOPIC = "FeatureRecords";
+    private static final String BASE_TOPIC = "FeatureRecords";
     private String topic;
 
     public FeatureRecordProducer(String swid) {
@@ -23,7 +23,7 @@ public class FeatureRecordProducer implements Serializable {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.immunizer.microservices.monitor.FeatureRecordSerializer");
         producer = new KafkaProducer<String, FeatureRecord>(props);
-        topic = TOPIC + '/' + swid;
+        topic = BASE_TOPIC + '/' + swid;
     }
 
     public void send(FeatureRecord featureRecord) {
