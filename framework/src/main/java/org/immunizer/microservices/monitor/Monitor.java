@@ -21,6 +21,7 @@ public class Monitor {
     public static void main(String[] args) throws Exception {
         SparkConf sparkConf = new SparkConf().setAppName("Monitor").setMaster("spark://spark-master:7077");
         JavaStreamingContext jsc = new JavaStreamingContext(sparkConf, Durations.seconds(60));
+        DistributedCache cache = new DistributedCache(jsc.sparkContext());
 
         Map<String, Object> kafkaParams = new HashMap<>();
         kafkaParams.put("bootstrap.servers", BOOTSTRAP_SERVERS);
@@ -35,8 +36,6 @@ public class Monitor {
             ConsumerStrategies.SubscribePattern(Pattern.compile(TOPIC_PATTERN), kafkaParams));
 
         JavaDStream<String> modelStream = invocationStream.map(ConsumerRecord::value).flatMap(new ModelMapper()).filter(record -> record != null);
-
-        DistributedCache cache = new DistributedCache(jsc.sparkContext());
         modelStream.foreachRDD(model -> cache.updateModel(model));
 
         jsc.start();
