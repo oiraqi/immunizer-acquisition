@@ -14,9 +14,10 @@ import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class Monitor {
-    private static final String TOPIC_PATTERN = "Invocations/.+";
+
     private static final String BOOTSTRAP_SERVERS = "kafka:9092";
     private static final String GROUP_ID = "Monitor";
+    private static final String TOPIC_PATTERN = "Invocations/.+";
     private static final int BATCH_DURATION = 60;
 
     public static void main(String[] args) throws Exception {
@@ -35,7 +36,6 @@ public class Monitor {
         JavaInputDStream<ConsumerRecord<String, byte[]>> invocationStream = 
             KafkaUtils.createDirectStream(jsc, LocationStrategies.PreferConsistent(),
             ConsumerStrategies.SubscribePattern(Pattern.compile(TOPIC_PATTERN), kafkaParams));
-
         JavaDStream<String> modelStream = invocationStream.map(ConsumerRecord::value).flatMap(new ModelMapper()).filter(record -> record != null);
         modelStream.foreachRDD(model -> cache.updateModel(model));
 
