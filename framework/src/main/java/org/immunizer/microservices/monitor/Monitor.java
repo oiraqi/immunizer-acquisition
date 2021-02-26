@@ -37,7 +37,7 @@ public class Monitor {
             KafkaUtils.createDirectStream(jsc, LocationStrategies.PreferConsistent(),
             ConsumerStrategies.SubscribePattern(Pattern.compile(TOPIC_PATTERN), kafkaParams));
         JavaDStream<String> modelStream = invocationStream.map(ConsumerRecord::value)
-                            .flatMap(new ModelMapper()).filter(record -> record != null);
+            .flatMap(new ModelMapper()).filter(record -> record != null);
         modelStream.foreachRDD(model -> cache.updateModel(model));
 
         jsc.start();
