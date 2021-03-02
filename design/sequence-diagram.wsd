@@ -3,7 +3,7 @@ participant "Spark Driver" as Master
 collections "Spark Workers" as Workers
 database "Shared Cache" as Cache
 queue "Streaming Broker" as Broker
-Master -> Broker : Subscribe to streams, one per context
+Master -> Broker : subscribe to streams, one per context
 Broker --> Master : return invocation streams
 Master -> Workers : submit invocations (flatMap)
 Workers -> Cache : get needed data from\napplication model (V1 - V13)
