@@ -1,4 +1,4 @@
-# Monitoring Microservice
+# Monitor Microservice
 
 This is the Java implementation of the Monitoring Microservice of [Immunizer: A Scalable Loosely-Coupled Self-Protecting Software Framework using Adaptive Microagents and Parallelized Microservices](https://github.com/oiraqi/immunizer). It leverages distributed and parallel processing thanks to cluster-computing frameworks, such as Apache Spark and Google DataFlow, abstracted and unified through Apache Beam.
 
@@ -13,10 +13,10 @@ This is the Java implementation of the Monitoring Microservice of [Immunizer: A 
 - [Sensor Microagent](https://github.com/oiraqi/immunizer-sensor)
 - [Effector Microagent](https://github.com/oiraqi/immunizer-effector)
 ### Autonomic Protection Microservices
-- [Monitoring Microservice](https://github.com/oiraqi/immunizer-monitor)
-- [Analysis Microservice](https://github.com/oiraqi/immunizer-analyze)
-- [Planning Microservice](https://github.com/oiraqi/immunizer-plan)
-- [Execution Microservice](https://github.com/oiraqi/immunizer-execute)
+- [Monitor Microservice](https://github.com/oiraqi/immunizer-monitor)
+- [Analyzer Microservice](https://github.com/oiraqi/immunizer-analyze)
+- [Planner Microservice](https://github.com/oiraqi/immunizer-plan)
+- [Executor Microservice](https://github.com/oiraqi/immunizer-execute)
 - [Dashboard Microservice](https://github.com/oiraqi/immunizer-dashboard)
 
 
