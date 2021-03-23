@@ -15,8 +15,8 @@ repositories {
 dependencies {
         implementation 'com.google.code.gson:gson:2.2.4'
         implementation 'com.google.guava:guava:28.1-jre'
-        implementation 'org.apache.spark:spark-streaming_2.11:2.4.7'
-        implementation 'org.apache.spark:spark-streaming-kafka-0-10_2.11:2.4.7'
+        implementation 'org.apache.spark:spark-streaming_2.12:3.0.2'
+        implementation 'org.apache.spark:spark-streaming-kafka-0-10_2.12:3.0.2'
         implementation 'org.apache.ignite:ignite-spark:2.10.0'
 }
 
