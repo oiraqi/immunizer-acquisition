@@ -11,38 +11,44 @@ public class FeatureRecord implements Serializable {
     private String callStackId;
     // private StackTraceElement[] callStack;
     private String threadTag;
-    /*private long startTime;
-    private long endTime;*/
+    /*
+     * private long startTime; private long endTime;
+     */
     private String swid;
     private String fullyQualifiedMethodName;
     private HashMap<String, Double> record;
-    /*private String parameters;
-    private String result;*/
+    /*
+     * private String parameters; private String result;
+     */
 
     protected FeatureRecord() {
     }
 
-    public FeatureRecord(String callStackId, /*StackTraceElement[] callStack, */String threadTag/*, long startTime, long endTime*/,
-            String fullyQualifiedMethodName, String swid, HashMap<String, Double> record/*, String parameters, String result*/) {
+    public FeatureRecord(String callStackId,
+            /* StackTraceElement[] callStack, */String threadTag/* , long startTime, long endTime */,
+            String fullyQualifiedMethodName, String swid,
+            HashMap<String, Double> record/* , String parameters, String result */) {
         this.callStackId = callStackId;
         // this.callStack = callStack;
         this.threadTag = threadTag;
-        /*this.startTime = startTime;
-        this.endTime = endTime;*/
+        /*
+         * this.startTime = startTime; this.endTime = endTime;
+         */
         this.fullyQualifiedMethodName = fullyQualifiedMethodName;
         this.swid = swid;
         this.record = record;
-        /*this.parameters = parameters;
-        this.result = result;*/
+        /*
+         * this.parameters = parameters; this.result = result;
+         */
     }
 
     public String getCallStackId() {
         return callStackId;
     }
 
-    /*public StackTraceElement[] getCallStack() {
-        return callStack;
-    }*/
+    /*
+     * public StackTraceElement[] getCallStack() { return callStack; }
+     */
 
     public String getThreadTag() {
         return threadTag;
@@ -61,9 +67,8 @@ public class FeatureRecord implements Serializable {
     }
 
     public String getModel() {
-        String method = fullyQualifiedMethodName
-                .substring(0, fullyQualifiedMethodName.indexOf(')') + 1).trim();
-        
+        String method = fullyQualifiedMethodName.substring(0, fullyQualifiedMethodName.indexOf(')') + 1).trim();
+
         method = method.replace(' ', '_');
         return method + '_' + callStackId;
     }
@@ -77,27 +82,20 @@ public class FeatureRecord implements Serializable {
         return buffer.toString();
     }
 
-    /*public long getStartTime() {
-        return startTime;
-    }
+    /*
+     * public long getStartTime() { return startTime; }
+     * 
+     * public long getEndTime() { return endTime; }
+     */
 
-    public long getEndTime() {
-        return endTime;
-    }*/
-
-    /*public String getParameters() {
-        return parameters;
-    }
-
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
-    }
-
-    public String getResult() {
-        return result;
-    }
-
-    public void setResult(String result) {
-        this.result = result;
-    }*/
+    /*
+     * public String getParameters() { return parameters; }
+     * 
+     * public void setParameters(String parameters) { this.parameters = parameters;
+     * }
+     * 
+     * public String getResult() { return result; }
+     * 
+     * public void setResult(String result) { this.result = result; }
+     */
 }

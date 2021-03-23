@@ -12,14 +12,15 @@ import com.google.common.base.Splitter;
 public class FeatureExtractor {
 
 	private HashMap<String, Integer> dictionary, callStackOccurences, pathToNodeOccurences,
-			aggregatedPathToNodeOccurences, /*flushCounters, */csCounters1, csCounters3;
+			aggregatedPathToNodeOccurences, /* flushCounters, */csCounters1, csCounters3;
 	private HashMap<String, HashMap<String, Double>> cmqs;
 	private HashMap<String, Double> sumMinIF1s, sumMinIF3s;
 	// private HashMap<String, PrintWriter> models;
 	private static FeatureExtractor singleton;
 	// private String modelsRepository;
 	// private int bufferSize;
-	// private int skipFirstRecords;	// Use these first records just to learn. Don't log them.  
+	// private int skipFirstRecords; // Use these first records just to learn. Don't
+	// log them.
 
 	private FeatureExtractor() {
 		dictionary = new HashMap<String, Integer>();
@@ -36,9 +37,9 @@ public class FeatureExtractor {
 		// modelsRepository = System.getProperty("models");
 		// bufferSize = Integer.parseInt(System.getProperty("buffer"));
 		// skipFirstRecords = Integer.parseInt(System.getProperty("skip"));
-		/* File path = new File(modelsRepository);
-		if (!path.exists())
-			path.mkdir();*/
+		/*
+		 * File path = new File(modelsRepository); if (!path.exists()) path.mkdir();
+		 */
 	}
 
 	public static FeatureExtractor getSingleton() {
@@ -56,9 +57,9 @@ public class FeatureExtractor {
 	 * @return The Feature Record
 	 */
 	public FeatureRecord extract(JsonObject invocation) {
-		/*if (LazySerializationHelper.skipInvocation(invocation))
-			return null;
-		*/
+		/*
+		 * if (LazySerializationHelper.skipInvocation(invocation)) return null;
+		 */
 		HashMap<String, Double> record = new HashMap<String, Double>();
 		int[] lengths;
 		double[] minIF1s, minIF3s, pathToNodeMinFreqs, maxNumberVariations, maxStringLengthVariations;
@@ -80,18 +81,18 @@ public class FeatureExtractor {
 				result = invocation.get("result");
 			} catch (Throwable th) {
 				/**
-				 * There are some complex types that Gson does not know how to deal with.
-				 * They require writing custom adapters, and registring them with Gson.
-				 * Otherwise, Gson.toJsonTree throws an error. To avoid a program crash and
-				 * identify these types, we catch errors, return back the counter to its
-				 * previous value and return null, as if such an invocation never occured.
-				 * Finally, we log errors for analysis and eventually writing the
-				 * necessary adapters.
+				 * There are some complex types that Gson does not know how to deal with. They
+				 * require writing custom adapters, and registring them with Gson. Otherwise,
+				 * Gson.toJsonTree throws an error. To avoid a program crash and identify these
+				 * types, we catch errors, return back the counter to its previous value and
+				 * return null, as if such an invocation never occured. Finally, we log errors
+				 * for analysis and eventually writing the necessary adapters.
 				 */
 				synchronized (callStackOccurences) {
 					callStackOccurences.put("" + callStackId, callStackOccurences.get("" + callStackId) - 1);
 				}
-				//System.out.println(invocation.getFullyQualifiedMethodName() + ": " + th.getMessage());
+				// System.out.println(invocation.getFullyQualifiedMethodName() + ": " +
+				// th.getMessage());
 				return null;
 			}
 			lengths = new int[numberOfParams + 1];
@@ -157,18 +158,18 @@ public class FeatureExtractor {
 				parameters = invocation.get("params");
 			} catch (Throwable th) {
 				/**
-				 * There are some complex types that Gson does not know how to deal with.
-				 * They require writing custom adapters, and registring them with Gson.
-				 * Otherwise, Gson.toJsonTree throws an error. To avoid a program crash and
-				 * identify these types, we catch errors, return back the counter to its
-				 * previous value and return null, as if such an invocation never occured.
-				 * Finally, we log errors for analysis and eventually writing the
-				 * necessary adapters.
+				 * There are some complex types that Gson does not know how to deal with. They
+				 * require writing custom adapters, and registring them with Gson. Otherwise,
+				 * Gson.toJsonTree throws an error. To avoid a program crash and identify these
+				 * types, we catch errors, return back the counter to its previous value and
+				 * return null, as if such an invocation never occured. Finally, we log errors
+				 * for analysis and eventually writing the necessary adapters.
 				 */
 				synchronized (callStackOccurences) {
 					callStackOccurences.put("" + callStackId, callStackOccurences.get("" + callStackId) - 1);
 				}
-				//System.out.println(invocation.getFullyQualifiedMethodName() + ": " + th.getMessage());
+				// System.out.println(invocation.getFullyQualifiedMethodName() + ": " +
+				// th.getMessage());
 				return null;
 			}
 			lengths = new int[numberOfParams];
@@ -211,18 +212,18 @@ public class FeatureExtractor {
 				result = invocation.get("result");
 			} catch (Throwable th) {
 				/**
-				 * There are some complex types that Gson does not know how to deal with.
-				 * They require writing custom adapters, and registring them with Gson.
-				 * Otherwise, Gson.toJsonTree throws an error. To avoid a program crash and
-				 * identify these types, we catch errors, return back the counter to its
-				 * previous value and return null, as if such an invocation never occured.
-				 * Finally, we log errors for analysis and eventually writing the
-				 * necessary adapters.
+				 * There are some complex types that Gson does not know how to deal with. They
+				 * require writing custom adapters, and registring them with Gson. Otherwise,
+				 * Gson.toJsonTree throws an error. To avoid a program crash and identify these
+				 * types, we catch errors, return back the counter to its previous value and
+				 * return null, as if such an invocation never occured. Finally, we log errors
+				 * for analysis and eventually writing the necessary adapters.
 				 */
 				synchronized (callStackOccurences) {
 					callStackOccurences.put("" + callStackId, callStackOccurences.get("" + callStackId) - 1);
 				}
-				//System.out.println(invocation.getFullyQualifiedMethodName() + ": " + th.getMessage());
+				// System.out.println(invocation.getFullyQualifiedMethodName() + ": " +
+				// th.getMessage());
 				return null;
 			}
 			lengths = new int[1];
@@ -256,36 +257,35 @@ public class FeatureExtractor {
 		}
 		// record.put("execution_time", (double)executionTime);
 		record.put("exception", exception ? (double) 1 : 0);
-		return new FeatureRecord(callStackId, /*invocation.getCallStack(), */invocation.get("threadTag").getAsString(),
-				/*invocation.getStartTime(), invocation.getEndTime(),*/ invocation.get("fullyQualifiedMethodName").getAsString(),
-				invocation.get("swid").getAsString(), record/*,
-				(parameters != null) ? parameters.toString().replace('"', '_').replace('\'', '_').replace(' ', '_')
-						: null,
-				(result != null) ? result.toString().replace('"', '_').replace('\'', '_').replace(' ', '_') : null*/);
+		return new FeatureRecord(callStackId, /* invocation.getCallStack(), */invocation.get("threadTag").getAsString(),
+				/* invocation.getStartTime(), invocation.getEndTime(), */ invocation.get("fullyQualifiedMethodName")
+						.getAsString(),
+				invocation.get("swid").getAsString(),
+				record/*
+						 * , (parameters != null) ? parameters.toString().replace('"',
+						 * '_').replace('\'', '_').replace(' ', '_') : null, (result != null) ?
+						 * result.toString().replace('"', '_').replace('\'', '_').replace(' ', '_') :
+						 * null
+						 */);
 	}
 
-	/*public synchronized void log(FeatureRecord featureRecord) {
-		if (callStackOccurences.get("" + featureRecord.getCallStackId()) <= skipFirstRecords)
-			return;
-
-		try {
-			String model = featureRecord.getModel();
-			if (!models.containsKey(model)) {
-				if (model.indexOf('/') > 0)
-					new File(modelsRepository + '/' + model.substring(0, model.indexOf('/'))).mkdir();
-				models.put(model, new PrintWriter(new FileWriter(modelsRepository + '/' + model + ".log")));
-				flushCounters.put(model, 0);
-			}
-			models.get(model).println(featureRecord.getValues());
-			flushCounters.put(model, flushCounters.get(model) + 1);
-			if (flushCounters.get(model) >= bufferSize) {	// Typical bufferSize values: [100 - 500]
-				models.get(model).flush();
-				flushCounters.put(model, 0);
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}*/
+	/*
+	 * public synchronized void log(FeatureRecord featureRecord) { if
+	 * (callStackOccurences.get("" + featureRecord.getCallStackId()) <=
+	 * skipFirstRecords) return;
+	 * 
+	 * try { String model = featureRecord.getModel(); if
+	 * (!models.containsKey(model)) { if (model.indexOf('/') > 0) new
+	 * File(modelsRepository + '/' + model.substring(0,
+	 * model.indexOf('/'))).mkdir(); models.put(model, new PrintWriter(new
+	 * FileWriter(modelsRepository + '/' + model + ".log")));
+	 * flushCounters.put(model, 0); }
+	 * models.get(model).println(featureRecord.getValues());
+	 * flushCounters.put(model, flushCounters.get(model) + 1); if
+	 * (flushCounters.get(model) >= bufferSize) { // Typical bufferSize values: [100
+	 * - 500] models.get(model).flush(); flushCounters.put(model, 0); } } catch
+	 * (Exception ex) { ex.printStackTrace(); } }
+	 */
 
 	/**
 	 * Builds features for each parameter or returned value by walking recursively
@@ -313,7 +313,8 @@ public class FeatureExtractor {
 			if (!aggregatedPathToNodeOccurences.containsKey(cxAggregatedPathToNode))
 				aggregatedPathToNodeOccurences.put(cxAggregatedPathToNode, 1);
 			else
-				aggregatedPathToNodeOccurences.put(cxAggregatedPathToNode, (aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode) + 1));
+				aggregatedPathToNodeOccurences.put(cxAggregatedPathToNode,
+						(aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode) + 1));
 		}
 
 		if (jsonElement.isJsonNull())
@@ -339,14 +340,15 @@ public class FeatureExtractor {
 							maxStringLengthVariations);
 		} else if (jsonElement.isJsonObject()) {
 			JsonObject jsonObject = jsonElement.getAsJsonObject();
-			/*Iterator<String> keys = jsonObject.keySet().iterator();
-			while (keys.hasNext()) {
-				String key = (String) keys.next();
-				build(callStackId, pathToNode.isEmpty() ? key : pathToNode + '_' + key,
-						aggregatedPathToNode.isEmpty() ? key : aggregatedPathToNode + '_' + key, jsonObject.get(key),
-						paramIndex, isParentAnArray, numberOfParams, minIF1s, minIF3s, pathToNodeMinFreqs,
-						maxNumberVariations, maxStringLengthVariations);
-			}*/
+			/*
+			 * Iterator<String> keys = jsonObject.keySet().iterator(); while
+			 * (keys.hasNext()) { String key = (String) keys.next(); build(callStackId,
+			 * pathToNode.isEmpty() ? key : pathToNode + '_' + key,
+			 * aggregatedPathToNode.isEmpty() ? key : aggregatedPathToNode + '_' + key,
+			 * jsonObject.get(key), paramIndex, isParentAnArray, numberOfParams, minIF1s,
+			 * minIF3s, pathToNodeMinFreqs, maxNumberVariations, maxStringLengthVariations);
+			 * }
+			 */
 			Iterator<Entry<String, JsonElement>> entries = jsonObject.entrySet().iterator();
 			while (entries.hasNext()) {
 				String key = (String) entries.next().getKey();
@@ -374,8 +376,10 @@ public class FeatureExtractor {
 				pathToNodeMinFreqs[numberOfParams] = freq;
 			if (primitive.isString()) {
 				String value = primitive.getAsString();
-				double minIF1 = getMinIF(value, 1, cxAggregatedPathToNode, aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode));
-				double minIF3 = getMinIF(value, 3, cxAggregatedPathToNode, aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode));
+				double minIF1 = getMinIF(value, 1, cxAggregatedPathToNode,
+						aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode));
+				double minIF3 = getMinIF(value, 3, cxAggregatedPathToNode,
+						aggregatedPathToNodeOccurences.get(cxAggregatedPathToNode));
 				if (paramIndex >= 0) {
 					if (minIF1 < minIF1s[paramIndex])
 						minIF1s[paramIndex] = minIF1;

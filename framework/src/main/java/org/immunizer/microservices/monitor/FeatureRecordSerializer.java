@@ -10,8 +10,9 @@ public class FeatureRecordSerializer implements Serializer<FeatureRecord>, Seria
 
     private Gson gson = new Gson();
 
-    public FeatureRecordSerializer() {}
-    
+    public FeatureRecordSerializer() {
+    }
+
     @Override
     public byte[] serialize(String topic, FeatureRecord featureRecord) {
         return gson.toJson(featureRecord).getBytes();
