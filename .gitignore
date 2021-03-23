@@ -4,6 +4,7 @@
 
 # Folders To Exclude #
 .gradle
+.vscode
 *.class
 !gradle/wrapper/gradle-wrapper.jar
 apps/ofbiz/*
