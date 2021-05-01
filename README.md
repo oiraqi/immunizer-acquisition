@@ -29,7 +29,7 @@ All dependencies are managed through Gradle.
 
 ## Current Environment
 - Linux Ubuntu 18.04 (Bionic)
-- OpenJDK 8
+- OpenJDK 11
 - Gson 2.8.6
 - Apache Kafka Clients API 2.4.0
 
